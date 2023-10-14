@@ -12,14 +12,17 @@ export const SignUp = async (req, res) => {
 
     // checking username
     const checkUsername_availability = await User.findOne({
-      email: email,
+      username: username,
     });
 
     // condition if username and email is taken
-    if (checkEmail_availability) {
-      return res.status(403).json({ system_message: "email already in use!" });
-    }
-    if (checkUsername_availability) {
+    if (checkEmail_availability && checkUsername_availability) {
+      return res
+        .status(403)
+        .json({ system_message: "email and username is already taken!" });
+    } else if (checkEmail_availability) {
+      return res.status(403).json({ system_message: "email already taken!" });
+    } else if (checkUsername_availability) {
       return res
         .status(403)
         .json({ system_message: "username is already taken!" });

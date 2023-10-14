@@ -4,11 +4,13 @@ import dotenv from "dotenv";
 dotenv.config();
 import UserRoutetr from "./routes/user_route.js";
 import AuthRouter from "./routes/auth_route.js";
+import cors from "cors";
 
 const port = process.env.PORT || 3000;
 const app = expres();
 
 app.use(expres.json());
+app.use(cors());
 
 app.use("/api/user", UserRoutetr);
 app.use("/api/auth", AuthRouter);

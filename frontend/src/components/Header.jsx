@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
@@ -32,7 +32,7 @@ const Header = () => {
             <li className="hidden sm:inline hover:underline">About</li>
           </Link>
           <Link to={"/sign-in"}>
-            <li className="hover:underline">Sign in</li>
+            <li className="hover:underline">Login</li>
           </Link>
         </ul>
       </div>

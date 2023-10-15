@@ -156,14 +156,15 @@ const Signin = () => {
             )}
           </button>
         </form>
-        {/* <div className="flex gap-2 mt-2">
-          <p>Have an account?</p>
-          <Link to={"/sign-in"}>
+
+        <div className="flex gap-2 mt-2">
+          <p>Don't have an account?</p>
+          <Link to={"/sign-up"}>
             <span className="text-blue-700 font-semibold hover:text-blue-500">
-              Sign in
+              Sign up
             </span>
           </Link>
-        </div> */}
+        </div>
       </div>
       <ToastContainer />
     </>

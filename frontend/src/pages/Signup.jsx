@@ -91,7 +91,9 @@ const Signup = () => {
   return (
     <>
       <div className="p-3 max-w-lg mx-auto">
-        <h1 className="text-3xl text-center font-semibold my-7">Sign up</h1>
+        <h1 className="text-3xl text-center font-semibold my-7">
+          Register Account
+        </h1>
         <form action="" onSubmit={submitInput} className="flex flex-col gap-4 ">
           <input
             type="text"
@@ -139,7 +141,7 @@ const Signup = () => {
           <p>Have an account?</p>
           <Link to={"/sign-in"}>
             <span className="text-blue-700 font-semibold hover:text-blue-500">
-              Login
+              Sign in
             </span>
           </Link>
         </div>

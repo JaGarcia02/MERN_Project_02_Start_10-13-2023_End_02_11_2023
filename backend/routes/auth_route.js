@@ -5,7 +5,6 @@ const router = express.Router();
 
 router.post("/signup", SignUp);
 router.post("/signin", SignIn);
-
-router.get("/check-token", GetToken);
+router.post("/check-token", GetToken);
 
 export default router;

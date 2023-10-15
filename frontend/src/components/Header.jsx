@@ -1,8 +1,76 @@
 import React, { useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { check_token, reset } from "../redux/features/auth/auth_slice";
+import { useDispatch, useSelector } from "react-redux";
+import Cookie from "js-cookie";
 
 const Header = () => {
+  const {
+    Auth_Login,
+    isLoadingUser,
+    isErrorUser,
+    isSuccessUser,
+    responseMessage,
+  } = useSelector((state) => state.Auth_Login);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const token = {
+    token: Cookie.get("user_token"),
+  };
+
+  useEffect(() => {
+    if (isErrorUser) {
+      navigate("/sign-in");
+      location.reload();
+      alert("IsErrorUser");
+      Cookie.remove("user_token");
+      localStorage.removeItem("user_token");
+    }
+    if (isSuccessUser) {
+      navigate("/");
+    }
+    switch (responseMessage) {
+      case "Token Expired!":
+        alert("Your session has expired, please login again!");
+        Cookie.remove("user_token");
+        localStorage.removeItem("user_token");
+        navigate("/sign-in");
+        location.reload();
+        break;
+    }
+    dispatch(reset());
+  }, [Auth_Login, isLoadingUser, isErrorUser, isSuccessUser, responseMessage]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const LocalStorage_Token = {
+        token: localStorage.getItem("user_token"),
+      };
+
+      if (!Cookie.get("user_token")) {
+        alert("No Token Found! Plase Signin again.\nSystem Admin");
+        Cookie.remove("user_token");
+        localStorage.removeItem("user_token");
+        navigate("/sign-in");
+        location.reload();
+      }
+      if (
+        JSON.stringify(Cookie.get("user_token")) !== LocalStorage_Token.token
+      ) {
+        alert(
+          "Invalid Token / Token not recognize! Plase Signin again.\nSystem Admin"
+        );
+        Cookie.remove("user_token");
+        localStorage.removeItem("user_token");
+        navigate("/sign-in");
+        location.reload();
+      }
+
+      dispatch(check_token(token));
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
   return (
     <header className="bg-slate-200 shadow-md ">
       <div className="flex justify-between items-center max-w-6xl mx-auto p-3">

@@ -4,11 +4,21 @@ import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { useDispatch, useSelector } from "react-redux";
+import { login_user, reset } from "../redux/features/auth/auth_slice";
 
 const Signin = () => {
   const [input, setInput] = useState({ email: "", password: "" });
   const [isloading, setIsLoading] = useState(false);
+  const {
+    Auth_Login,
+    isLoadingUser,
+    isErrorUser,
+    isSuccessUser,
+    responseMessage,
+  } = useSelector((state) => state.Auth_Login);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // notfication tostify
   const notify_success = () => {
@@ -44,35 +54,69 @@ const Signin = () => {
   // submit function
   const submitInput = (e) => {
     e.preventDefault();
+
+    const input_data_login = {
+      email: input.email,
+      password: input.password,
+    };
     setIsLoading(true);
-    axios
-      .post("http://localhost:5555/api/auth/signin", {
-        email: input.email,
-        password: input.password,
-      })
-      .then((res) => {
-        setInput({ ...input, email: "", password: "" });
-        notify_success();
-        setTimeout(() => {
-          setIsLoading(false);
-          navigate("/");
-        }, 4000);
-      })
-      .catch((error) => {
-        if (
-          error.response.status === 403 &&
-          error.response.data.system_message === "Email not found!"
-        ) {
-          notify_error_403_email();
-        } else if (
-          error.response.status === 403 &&
-          error.response.data.system_message === "Wrong password!"
-        ) {
-          notify_error_403_password();
-        }
-        setIsLoading(false);
-      });
+    dispatch(login_user(input_data_login));
+    // axios
+    //   .post("http://localhost:5555/api/auth/signin", {
+    //     email: input.email,
+    //     password: input.password,
+    //   })
+    //   .then((res) => {
+    //     console.log(res.data);
+    //     notify_success();
+    //     // setTimeout(() => {
+    //     setIsLoading(false);
+    //     //   navigate("/");
+    //     // }, 4000);
+    //     // setInput({ ...input, email: "", password: "" });
+    //   })
+    //   .catch((error) => {
+    //     if (
+    //       error.response.status === 403 &&
+    //       error.response.data.system_message === "Email not found!"
+    //     ) {
+    //       notify_error_403_email();
+    //     } else if (
+    //       error.response.status === 403 &&
+    //       error.response.data.system_message === "Wrong password!"
+    //     ) {
+    //       notify_error_403_password();
+    //     }
+    //     setIsLoading(false);
+    //   });
   };
+
+  useEffect(() => {
+    if (isErrorUser) {
+      setIsLoading(false);
+    }
+
+    if (isSuccessUser) {
+      notify_success();
+      setInput({ ...input, email: "", password: "" });
+      setTimeout(() => {
+        setIsLoading(false);
+        navigate("/");
+      }, 4000);
+    }
+
+    switch (responseMessage) {
+      case "Email not found!":
+        notify_error_403_email();
+        break;
+
+      case "Wrong password!":
+        notify_error_403_password();
+        break;
+    }
+
+    dispatch(reset());
+  }, [Auth_Login, isLoadingUser, isErrorUser, isSuccessUser, responseMessage]);
 
   return (
     <>

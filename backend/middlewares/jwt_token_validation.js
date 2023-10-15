@@ -15,11 +15,10 @@ export const token_validation = async (req, res, next) => {
     } catch (error) {
       return res
         .status(400)
-        .json({ message: "Invalid Token / Token not recognize!" });
+        .json({ system_message: "Invalid Token / Token not recognize!" });
     }
   }
   if (!token) {
-    console.log("No Token Found!");
-    return res.status(401).json({ message: "No Token Found!" });
+    return res.status(401).json({ system_message: "No Token Found!" });
   }
 };

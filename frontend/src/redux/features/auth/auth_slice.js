@@ -4,9 +4,9 @@ import authService from "./auth_service";
 
 const initialState = {
   user: "",
-  isErrorUser: false,
-  isSuccessUser: false,
-  isLoadingUser: false,
+  isLoadingAuth: false,
+  isSuccessAuth: false,
+  isErrorAuth: false,
   responseMessage: "",
 };
 
@@ -50,9 +50,9 @@ export const authSlice = createSlice({
   initialState,
   reducers: {
     reset: (state) => {
-      state.isLoadingUser = false;
-      state.isSuccessUser = false;
-      state.isErrorUser = false;
+      state.isLoadingAuth = false;
+      state.isSuccessAuth = false;
+      state.isErrorAuth = false;
       state.responseMessage = "";
     },
   },
@@ -61,16 +61,16 @@ export const authSlice = createSlice({
     builder
       // Login -states-
       .addCase(login_user.pending, (state, action) => {
-        state.isLoadingUser = true;
+        state.isLoadingAuth = true;
       })
       .addCase(login_user.fulfilled, (state, action) => {
-        state.isLoadingUser = false;
-        state.isSuccessUser = true;
+        state.isLoadingAuth = false;
+        state.isSuccessAuth = true;
         state.user = action.payload;
       })
       .addCase(login_user.rejected, (state, action) => {
-        state.isLoadingUser = false;
-        state.isErrorUser = true;
+        state.isLoadingAuth = false;
+        state.isErrorAuth = true;
         state.responseMessage = action.payload;
         state.user = null;
       })
@@ -99,8 +99,8 @@ export const authSlice = createSlice({
       //   })
       // Check Token -state-
       .addCase(check_token.rejected, (state, action) => {
-        state.isLoadingUser = false;
-        state.isErrorUser = true;
+        state.isLoadingAuth = false;
+        state.isErrorAuth = true;
         state.responseMessage = action.payload;
       });
   },

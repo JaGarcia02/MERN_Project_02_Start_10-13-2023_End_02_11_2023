@@ -12,9 +12,9 @@ const Signin = () => {
   const [isloading, setIsLoading] = useState(false);
   const {
     Auth_Login,
-    isLoadingUser,
-    isErrorUser,
-    isSuccessUser,
+    isLoadingAuth,
+    isErrorAuth,
+    isSuccessAuth,
     responseMessage,
   } = useSelector((state) => state.Auth_Login);
   const navigate = useNavigate();
@@ -59,48 +59,25 @@ const Signin = () => {
       email: input.email,
       password: input.password,
     };
-    setIsLoading(true);
+
+    setIsLoading(isLoadingAuth);
     dispatch(login_user(input_data_login));
-    // axios
-    //   .post("http://localhost:5555/api/auth/signin", {
-    //     email: input.email,
-    //     password: input.password,
-    //   })
-    //   .then((res) => {
-    //     console.log(res.data);
-    //     notify_success();
-    //     // setTimeout(() => {
-    //     setIsLoading(false);
-    //     //   navigate("/");
-    //     // }, 4000);
-    //     // setInput({ ...input, email: "", password: "" });
-    //   })
-    //   .catch((error) => {
-    //     if (
-    //       error.response.status === 403 &&
-    //       error.response.data.system_message === "Email not found!"
-    //     ) {
-    //       notify_error_403_email();
-    //     } else if (
-    //       error.response.status === 403 &&
-    //       error.response.data.system_message === "Wrong password!"
-    //     ) {
-    //       notify_error_403_password();
-    //     }
-    //     setIsLoading(false);
-    //   });
   };
 
   useEffect(() => {
-    if (isErrorUser) {
-      setIsLoading(false);
+    if (isLoadingAuth) {
+      setIsLoading(true);
     }
 
-    if (isSuccessUser) {
+    if (isErrorAuth) {
+      setIsLoading(isLoadingAuth);
+    }
+
+    if (isSuccessAuth) {
       notify_success();
       setInput({ ...input, email: "", password: "" });
       setTimeout(() => {
-        setIsLoading(false);
+        setIsLoading(isLoadingAuth);
         navigate("/");
       }, 4000);
     }
@@ -116,7 +93,7 @@ const Signin = () => {
     }
 
     dispatch(reset());
-  }, [Auth_Login, isLoadingUser, isErrorUser, isSuccessUser, responseMessage]);
+  }, [Auth_Login, isLoadingAuth, isSuccessAuth, isErrorAuth, responseMessage]);
 
   return (
     <>

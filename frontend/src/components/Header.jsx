@@ -8,9 +8,9 @@ import Cookie from "js-cookie";
 const Header = () => {
   const {
     Auth_Login,
-    isLoadingUser,
-    isErrorUser,
-    isSuccessUser,
+    isLoadingAuth,
+    isErrorAuth,
+    isSuccessAuth,
     responseMessage,
   } = useSelector((state) => state.Auth_Login);
   const dispatch = useDispatch();
@@ -20,7 +20,7 @@ const Header = () => {
   };
 
   useEffect(() => {
-    if (isErrorUser) {
+    if (isErrorAuth) {
       alert("Your session has expired, Please Signin again!\nSystem Admin");
       Cookie.remove("user_token");
       localStorage.removeItem("user_token");
@@ -28,7 +28,7 @@ const Header = () => {
       location.reload();
     }
     dispatch(reset());
-  }, [Auth_Login, isLoadingUser, isErrorUser, isSuccessUser, responseMessage]);
+  }, [Auth_Login, isLoadingAuth, isSuccessAuth, isErrorAuth, responseMessage]);
 
   useEffect(() => {
     const interval = setInterval(() => {

@@ -21,23 +21,11 @@ const Header = () => {
 
   useEffect(() => {
     if (isErrorUser) {
-      navigate("/sign-in");
-      location.reload();
-      alert("IsErrorUser");
+      alert("Your session has expired, Please Signin again!\nSystem Admin");
       Cookie.remove("user_token");
       localStorage.removeItem("user_token");
-    }
-    if (isSuccessUser) {
-      navigate("/");
-    }
-    switch (responseMessage) {
-      case "Token Expired!":
-        alert("Your session has expired, please login again!");
-        Cookie.remove("user_token");
-        localStorage.removeItem("user_token");
-        navigate("/sign-in");
-        location.reload();
-        break;
+      navigate("/sign-in");
+      location.reload();
     }
     dispatch(reset());
   }, [Auth_Login, isLoadingUser, isErrorUser, isSuccessUser, responseMessage]);

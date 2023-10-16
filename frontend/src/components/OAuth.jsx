@@ -6,19 +6,14 @@ import { reset, login_user_google } from "../redux/features/auth/auth_slice";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 
-const OAuth = ({
-  isloading,
-  setIsLoading,
-  Auth_Login,
-  isLoadingAuth,
-  isErrorAuth,
-  isSuccessAuth,
-  responseMessage,
-  response,
-  reset,
-}) => {
+const OAuth = ({ isSuccessAuth, response }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const { Auth_Login, isLoadingAuth, isErrorAuth, responseMessage } =
+    useSelector((state) => state.Auth_Login);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const Signin_With_Google = async () => {
     try {
       const provider = new GoogleAuthProvider();
@@ -31,6 +26,7 @@ const OAuth = ({
         email: google_data_result.user.email,
         photo: google_data_result.user.photoURL,
       };
+      setIsLoading(isLoadingAuth);
       dispatch(login_user_google(googleUserData));
     } catch (error) {
       console.log("Could not signin with google!", error);
@@ -38,24 +34,33 @@ const OAuth = ({
   };
 
   useEffect(() => {
-    console.log(response?.data);
-    dispatch(reset);
-  }, [
-    Auth_Login,
-    isLoadingAuth,
-    isErrorAuth,
-    isSuccessAuth,
-    responseMessage,
-    response,
-  ]);
+    if (
+      isLoadingAuth ||
+      (isSuccessAuth && response?.data.login_method === "System")
+    ) {
+      setIsLoading(true);
+    }
+
+    if (isErrorAuth) {
+      setIsLoading(isLoadingAuth);
+    }
+
+    if (isSuccessAuth) {
+      setTimeout(() => {
+        setIsLoading(isLoadingAuth);
+        navigate("/home");
+      }, 4000);
+    }
+  }, [Auth_Login, isLoadingAuth, isErrorAuth, responseMessage]);
+
   return (
     <button
-      disabled={isloading ? true : false}
+      disabled={isLoading ? true : false}
       onClick={Signin_With_Google}
       type="button"
-      className="bg-red-700 text-white p-3 rounded-lg uppercase hover:opacity-80"
+      className="bg-red-700 text-white p-3 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed uppercase hover:opacity-80 h-[50px]"
     >
-      {isloading == true ? (
+      {isLoading == true ? (
         <>
           <div className="flex justify-center items-center text-[20px]">
             <AiOutlineLoading3Quarters className="animate-spin" />

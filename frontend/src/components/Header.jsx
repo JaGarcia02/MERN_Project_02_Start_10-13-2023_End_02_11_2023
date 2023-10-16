@@ -36,24 +36,24 @@ const Header = () => {
         token: localStorage.getItem("user_token"),
       };
 
-      // if (!Cookie.get("user_token")) {
-      //   alert("No Token Found! Plase Signin again.\nSystem Admin");
-      //   Cookie.remove("user_token");
-      //   localStorage.removeItem("user_token");
-      //   navigate("/");
-      //   location.reload();
-      // }
-      // if (
-      //   JSON.stringify(Cookie.get("user_token")) !== LocalStorage_Token.token
-      // ) {
-      //   alert(
-      //     "Invalid Token / Token not recognize! Plase Signin again.\nSystem Admin"
-      //   );
-      //   Cookie.remove("user_token");
-      //   localStorage.removeItem("user_token");
-      //   navigate("/");
-      //   location.reload();
-      // }
+      if (!Cookie.get("user_token")) {
+        alert("No Token Found! Plase Signin again.\nSystem Admin");
+        Cookie.remove("user_token");
+        localStorage.removeItem("user_token");
+        navigate("/");
+        location.reload();
+      }
+      if (
+        JSON.stringify(Cookie.get("user_token")) !== LocalStorage_Token.token
+      ) {
+        alert(
+          "Invalid Token / Token not recognize! Plase Signin again.\nSystem Admin"
+        );
+        Cookie.remove("user_token");
+        localStorage.removeItem("user_token");
+        navigate("/");
+        location.reload();
+      }
 
       dispatch(check_token(token));
     }, 2000);

@@ -2,6 +2,7 @@ import User from "../models/user_model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
+// ************************************************************** Signup ************************************************************** //
 export const SignUp = async (req, res) => {
   const { username, email, password } = req.body;
 
@@ -44,7 +45,9 @@ export const SignUp = async (req, res) => {
     throw new Error(error);
   }
 };
+// ************************************************************** Signup ************************************************************** //
 
+// ************************************************************** Signin ************************************************************** //
 export const SignIn = async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -94,6 +97,7 @@ export const SignIn = async (req, res) => {
             password: check_email_exist.password,
           },
           token: Token,
+          login_method: "System",
         });
     }
 
@@ -108,17 +112,18 @@ export const SignIn = async (req, res) => {
     return res.status(500).json({ system_message: error.message });
   }
 };
+// ************************************************************** Signin ************************************************************** //
 
-// Google signin
+// ************************************************************** Google Signin ************************************************************** //
 export const SignIn_Google = async (req, res) => {
-  const { username, email, password, photo } = req.body;
+  const { username, email, photo } = req.body;
   try {
     const check_email_exist = await User.findOne({ email: email });
 
     // if email exixst = sign token
     if (check_email_exist) {
       const { password: password, ...rest } = check_email_exist._doc;
-      const Token = generate_token(
+      const Token = generate_token_google(
         check_email_exist._id,
         check_email_exist.username,
         check_email_exist.email,
@@ -128,7 +133,6 @@ export const SignIn_Google = async (req, res) => {
       return res
         .status(200)
         .cookie("user_token", Token, {
-          httpOnly: true,
           expires: new Date(Date.now() + 60 * 60 * 24 * 1000 * 1),
         })
         .json({ payload: rest, system_message: "User Exist!", token: Token });
@@ -143,7 +147,7 @@ export const SignIn_Google = async (req, res) => {
         salt
       );
 
-      const new_user_googleSignin = await User.create({
+      await User.create({
         username:
           username.split(" ").join("").toLowerCase() +
           Math.random().toString(36).split(-4),
@@ -152,7 +156,7 @@ export const SignIn_Google = async (req, res) => {
         photo: photo,
       });
       const { password: password, ...rest } = check_email_exist._doc;
-      const Token = generate_token(
+      const Token = generate_token_google(
         check_email_exist._id,
         check_email_exist.username,
         check_email_exist.email,
@@ -163,15 +167,20 @@ export const SignIn_Google = async (req, res) => {
       return res
         .status(201)
         .cookie("user_token", Token, {
-          httpOnly: true,
           expires: new Date(Date.now() + 60 * 60 * 24 * 1000 * 1),
         })
-        .json({ payload: rest, system_message: "User Created!", token: Token });
+        .json({
+          payload: rest,
+          system_message: "User Created!",
+          token: Token,
+          login_method: "Google",
+        });
     }
   } catch (error) {
     return res.status(500).json({ system_message: error.message });
   }
 };
+// ************************************************************** Google Signin ************************************************************** //
 
 export const GetToken = async (req, res) => {
   const { token } = req.body;
@@ -192,7 +201,7 @@ export const GetToken = async (req, res) => {
   }
 };
 
-const generate_token = (_id, username, email, password, photo) => {
+const generate_token_google = (_id, username, email, password, photo) => {
   return jwt.sign(
     {
       _id,
@@ -200,6 +209,19 @@ const generate_token = (_id, username, email, password, photo) => {
       email,
       password,
       photo,
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: "1h" }
+  );
+};
+
+const generate_token = (_id, username, email, password) => {
+  return jwt.sign(
+    {
+      _id,
+      username,
+      email,
+      password,
     },
     process.env.JWT_SECRET,
     { expiresIn: "1h" }

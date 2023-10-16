@@ -3,7 +3,7 @@ import Cookie from "js-cookie";
 import authService from "./auth_service";
 
 const initialState = {
-  user: "",
+  response: "",
   isLoadingAuth: false,
   isSuccessAuth: false,
   isErrorAuth: false,
@@ -16,7 +16,23 @@ export const login_user = createAsyncThunk(
     try {
       return await authService.Login(input_data_login);
     } catch (error) {
-      console.log(error.response.status);
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.system_message) ||
+        error.response.status ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const login_user_google = createAsyncThunk(
+  "auth/login-google",
+  async (googleUserData, thunkAPI) => {
+    try {
+      return await authService.Login_Google(googleUserData);
+    } catch (error) {
       const message =
         (error.response &&
           error.response.data &&
@@ -66,14 +82,31 @@ export const authSlice = createSlice({
       .addCase(login_user.fulfilled, (state, action) => {
         state.isLoadingAuth = false;
         state.isSuccessAuth = true;
-        state.user = action.payload;
+        state.response = action.payload;
       })
       .addCase(login_user.rejected, (state, action) => {
         state.isLoadingAuth = false;
         state.isErrorAuth = true;
         state.responseMessage = action.payload;
-        state.user = null;
+        state.response = null;
       })
+
+      // Login Google -states-
+      .addCase(login_user_google.pending, (state, action) => {
+        state.isLoadingAuth = true;
+      })
+      .addCase(login_user_google.fulfilled, (state, action) => {
+        state.isLoadingAuth = false;
+        state.isSuccessAuth = true;
+        state.response = action.payload;
+      })
+      .addCase(login_user_google.rejected, (state, action) => {
+        state.isLoadingAuth = false;
+        state.isErrorAuth = true;
+        state.responseMessage = action.payload;
+        state.response = null;
+      })
+
       //   // Logout -states-
       //   .addCase(logout_user.fulfilled, (state, action) => {
       //     state.user = null;

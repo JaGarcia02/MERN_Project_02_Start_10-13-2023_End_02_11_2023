@@ -1,24 +1,37 @@
 import axios from "axios";
-import Cookie from "js-cookie";
 import { auth_API_URL } from "../../../utils/auth_url";
+import Cookies from "js-cookie";
 
 const Login = async (input_data_login) => {
   const response = await axios.post(auth_API_URL + "signin", input_data_login);
+
   if (response.data) {
     localStorage.setItem("user_token", JSON.stringify(response.data.token));
   }
-  return response.data;
+  return response;
+};
+
+const Login_Google = async (googleUserData) => {
+  const response = await axios.post(
+    auth_API_URL + "google-signin",
+    googleUserData
+  );
+  if (response.data) {
+    localStorage.setItem("user_token", JSON.stringify(response.data.token));
+    Cookies.set("user_token", response.data.token);
+  }
+  return response;
 };
 
 const CheckToken = async (token) => {
-  console.log(token);
   const response = await axios.post(auth_API_URL + "check-token", token);
-  return response.data;
+  return response;
 };
 
 const authService = {
   Login,
   CheckToken,
+  Login_Google,
 };
 
 export default authService;

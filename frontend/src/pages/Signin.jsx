@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { login_user, reset } from "../redux/features/auth/auth_slice";
+import OAuth from "../components/OAuth";
 
 const Signin = () => {
   const [input, setInput] = useState({ email: "", password: "" });
@@ -16,6 +17,7 @@ const Signin = () => {
     isErrorAuth,
     isSuccessAuth,
     responseMessage,
+    response,
   } = useSelector((state) => state.Auth_Login);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -78,7 +80,7 @@ const Signin = () => {
       setInput({ ...input, email: "", password: "" });
       setTimeout(() => {
         setIsLoading(isLoadingAuth);
-        navigate("/");
+        navigate("/home");
       }, 4000);
     }
 
@@ -93,7 +95,14 @@ const Signin = () => {
     }
 
     dispatch(reset());
-  }, [Auth_Login, isLoadingAuth, isSuccessAuth, isErrorAuth, responseMessage]);
+  }, [
+    Auth_Login,
+    isLoadingAuth,
+    isSuccessAuth,
+    isErrorAuth,
+    responseMessage,
+    response,
+  ]);
 
   return (
     <>
@@ -132,6 +141,17 @@ const Signin = () => {
               "Login"
             )}
           </button>
+          <OAuth
+            isloading={isloading}
+            setIsLoading={setIsLoading}
+            Auth_Login={Auth_Login}
+            isLoadingAuth={isLoadingAuth}
+            isErrorAuth={isErrorAuth}
+            isSuccessAuth={isSuccessAuth}
+            responseMessage={responseMessage}
+            response={response}
+            reset={reset}
+          />
         </form>
 
         <div className="flex gap-2 mt-2">

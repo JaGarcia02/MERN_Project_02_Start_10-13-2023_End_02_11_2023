@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import OAuth from "../components/OAuth";
 
 const Signup = () => {
   const [input, setInput] = useState({ username: "", email: "", password: "" });
@@ -64,7 +65,7 @@ const Signup = () => {
         notify_success();
         setTimeout(() => {
           setIsLoading(false);
-          navigate("/sign-in");
+          navigate("/");
         }, 4000);
       })
       .catch((error) => {
@@ -136,10 +137,11 @@ const Signup = () => {
               "Submit"
             )}
           </button>
+          <OAuth />
         </form>
         <div className="flex gap-2 mt-2">
           <p>Have an account?</p>
-          <Link to={"/sign-in"}>
+          <Link to={"/"}>
             <span className="text-blue-700 font-semibold hover:text-blue-500">
               Sign in
             </span>

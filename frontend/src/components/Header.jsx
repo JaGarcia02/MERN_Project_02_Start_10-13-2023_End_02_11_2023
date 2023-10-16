@@ -24,7 +24,7 @@ const Header = () => {
       alert("Your session has expired, Please Signin again!\nSystem Admin");
       Cookie.remove("user_token");
       localStorage.removeItem("user_token");
-      navigate("/sign-in");
+      navigate("/");
       location.reload();
     }
     dispatch(reset());
@@ -36,24 +36,24 @@ const Header = () => {
         token: localStorage.getItem("user_token"),
       };
 
-      if (!Cookie.get("user_token")) {
-        alert("No Token Found! Plase Signin again.\nSystem Admin");
-        Cookie.remove("user_token");
-        localStorage.removeItem("user_token");
-        navigate("/sign-in");
-        location.reload();
-      }
-      if (
-        JSON.stringify(Cookie.get("user_token")) !== LocalStorage_Token.token
-      ) {
-        alert(
-          "Invalid Token / Token not recognize! Plase Signin again.\nSystem Admin"
-        );
-        Cookie.remove("user_token");
-        localStorage.removeItem("user_token");
-        navigate("/sign-in");
-        location.reload();
-      }
+      // if (!Cookie.get("user_token")) {
+      //   alert("No Token Found! Plase Signin again.\nSystem Admin");
+      //   Cookie.remove("user_token");
+      //   localStorage.removeItem("user_token");
+      //   navigate("/");
+      //   location.reload();
+      // }
+      // if (
+      //   JSON.stringify(Cookie.get("user_token")) !== LocalStorage_Token.token
+      // ) {
+      //   alert(
+      //     "Invalid Token / Token not recognize! Plase Signin again.\nSystem Admin"
+      //   );
+      //   Cookie.remove("user_token");
+      //   localStorage.removeItem("user_token");
+      //   navigate("/");
+      //   location.reload();
+      // }
 
       dispatch(check_token(token));
     }, 2000);
@@ -77,7 +77,7 @@ const Header = () => {
           <FaSearch className="text-slate-600" />
         </form>
         <ul className="flex gap-4 text-slate-700 cursor-pointer font-semibold">
-          <Link to={"/"}>
+          <Link to={"/home"}>
             <li
               className="hidden sm:inline hover:underline" // this will hide the home list if the screen size is small
             >
@@ -87,7 +87,7 @@ const Header = () => {
           <Link to={"/about"}>
             <li className="hidden sm:inline hover:underline">About</li>
           </Link>
-          <Link to={"/sign-in"}>
+          <Link to={"/"}>
             <li className="hover:underline">Login</li>
           </Link>
         </ul>

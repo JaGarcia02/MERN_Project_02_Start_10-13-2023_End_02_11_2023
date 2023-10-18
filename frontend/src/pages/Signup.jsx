@@ -15,6 +15,7 @@ import {
 const Signup = () => {
   const [input, setInput] = useState({ username: "", email: "", password: "" });
   const [isLoading_Signup, setIsLoading_Signup] = useState(false);
+  const [isLoading_Signup_Google, setIsLoading_Signup_Google] = useState(false);
   const {
     Auth_Login,
     isSuccessAuth,
@@ -28,6 +29,16 @@ const Signup = () => {
 
   const notify_success = () => {
     toast.success("Signup Success!", {
+      position: "bottom-left",
+      hideProgressBar: false,
+      autoClose: 3000,
+      pauseOnHover: false,
+      theme: "colored",
+    });
+  };
+
+  const notify_success_google = () => {
+    toast.success("Signup Success, Signing in. . .", {
       position: "bottom-left",
       hideProgressBar: false,
       autoClose: 3000,
@@ -75,7 +86,7 @@ const Signup = () => {
       password: input.password,
     };
 
-    setIsLoading_Signup(true);
+    // setIsLoading_Signup(true);
     dispatch(signup_user(input_data_signup));
     // axios
     //   .post("http://localhost:5555/api/auth/signup", {
@@ -115,21 +126,77 @@ const Signup = () => {
 
   useEffect(() => {
     if (isErrorAuth) {
-      setIsLoading_Signup(isLoadingAuth);
+      setIsLoading_Signup(false);
+      setIsLoading_Signup_Google(false);
     }
 
-    if (isErrorAuth) {
-      setIsLoading_Signup(isLoadingAuth);
+    if (isLoadingAuth) {
+      setIsLoading_Signup(true);
+      setIsLoading_Signup_Google(true);
     }
 
     if (isSuccessAuth) {
-      notify_success();
-      setInput({ ...input, username: "", email: "", password: "" });
-      setTimeout(() => {
-        setIsLoading_Signup(isLoadingAuth);
-        navigate("/");
-      }, 4000);
+      if (response.status == 201) {
+        // alert("gg");
+        notify_success();
+        setTimeout(() => {
+          setIsLoading_Signup(isLoadingAuth);
+          // navigate("/");
+        }, 4000);
+      }
+
+      if (response.status == 200 && response?.data?.login_method === "Google") {
+        notify_success();
+      }
+
+      if (
+        response?.data?.login_method === "Google" &&
+        response?.data?.system_message === "User Created!"
+      ) {
+        notify_success_google();
+      }
+
+      // if (
+      //   response.status == 201 &&
+      //   response?.data?.login_method === "Google" &&
+      //   response?.data?.system_message === "User Created!"
+      // ) {
+      //   notify_success_google();
+      // }
+
+      // if (
+      //   response.status == 201 &&
+      //   response?.data?.system_message === "User Exist!"
+      // ) {
+      //   notify_success_google();
+      // }
     }
+
+    // console.log(response.status);
+
+    // if (isSuccessAuth) {
+    //   if (!response?.data?.login_method) {
+    //     setIsLoading_Signup(true);
+    //   } else {
+    //     setIsLoading_Signup_Google(isSuccessAuth);
+    //     notify_success();
+    //   }
+    // }
+
+    // if (isSuccessAuth && !response?.data.login_method) {
+    //   // notify_success();
+    //   setInput({ ...input, username: "", email: "", password: "" });
+    //   setTimeout(() => {
+    //     setIsLoading_Signup(isLoadingAuth);
+    //     // navigate("/");
+    //   }, 4000);
+    // } else if (isSuccessAuth && response?.data.login_method === "Google") {
+    //   setIsLoading_Signup_Google(isSuccessAuth);
+    //   notify_success();
+    //   // setIsLoading_Signup(isLoadingAuth);
+    // }
+
+    // console.log(isSuccessAuth);
 
     switch (responseMessage) {
       case "email and username is already taken!":
@@ -196,7 +263,9 @@ const Signup = () => {
               disabled={isLoading_Signup ? true : false}
               className="bg-slate-700 text-white font-bold p-3 rounded-lg uppercase hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed h-[50px] transition-all duration-500 ease-in-out "
             >
-              {isLoading_Signup == true ? (
+              {isLoading_Signup == true &&
+              response?.status == 201 &&
+              !response.data.login_method ? (
                 <>
                   <div className="flex justify-center items-center text-[20px]">
                     <AiOutlineLoading3Quarters className="animate-spin" />
@@ -208,7 +277,13 @@ const Signup = () => {
                 </>
               )}
             </button>
-            <OAuth isSuccessAuth={isSuccessAuth} response={response} />
+            <OAuth
+              isLoading_Signup={isLoading_Signup}
+              setIsLoading_Signup={setIsLoading_Signup}
+              isLoading_Signup_Google={isLoading_Signup_Google}
+              setIsLoading_Signup_Google={setIsLoading_Signup_Google}
+              notify_success_google={notify_success_google}
+            />
           </form>
           <div className="flex gap-2 mt-5">
             <p>Have an account?</p>

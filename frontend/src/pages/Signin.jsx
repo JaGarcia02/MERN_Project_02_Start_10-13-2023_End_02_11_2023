@@ -10,6 +10,7 @@ import OAuth from "../components/OAuth";
 const Signin = () => {
   const [input, setInput] = useState({ email: "", password: "" });
   const [isLoading_Signin, setIsLoading_Signin] = useState(false);
+  const [isLoading_Signin_Google, setIsLoading_Signin_Google] = useState(false);
   const {
     Auth_Login,
     isLoadingAuth,
@@ -61,27 +62,68 @@ const Signin = () => {
       password: input.password,
     };
 
-    setIsLoading_Signin(true);
+    // setIsLoading_Signin(true);
     dispatch(login_user(input_data_login));
   };
 
   useEffect(() => {
-    if (isSuccessAuth && response?.data.login_method !== "System") {
-      setIsLoading_Signin(true);
+    if (isErrorAuth) {
+      setIsLoading_Signin(false);
+      setIsLoading_Signin_Google(false);
     }
 
-    if (isErrorAuth) {
-      setIsLoading_Signin(isLoadingAuth);
+    if (isLoadingAuth) {
+      setIsLoading_Signin(true);
+      setIsLoading_Signin_Google(true);
     }
 
     if (isSuccessAuth) {
-      notify_success();
-      setInput({ ...input, email: "", password: "" });
-      setTimeout(() => {
-        setIsLoading_Signin(isLoadingAuth);
-        navigate("/home");
-      }, 4000);
+      if (response?.data.login_method === "System") {
+        notify_success();
+        setTimeout(() => {
+          setIsLoading_Signin(true);
+          navigate("/home");
+        }, 4000);
+      }
+      // if (
+      //   response.status == 200 &&
+      //   response?.data?.login_method === "Google" &&
+      //   response?.data?.system_message === "User Exist!"
+      // ) {
+      //   notify_success();
+      // }
+      // if (response?.data.login_method === "Google") {
+      //   notify_success();
+      //   setTimeout(() => {
+      //     setIsLoading_Signin(true);
+      //     // navigate("/home");
+      //   }, 4000);
+      // }
+      // notify_success();
+      // setTimeout(() => {
+      //   setIsLoading_Signin(true);
+      //   // navigate("/home");
+      // }, 4000);
     }
+
+    // if (isSuccessAuth && response?.data.login_method !== "System") {
+    //   setIsLoading_Signin(true);
+    // }
+
+    // if (isErrorAuth) {
+    //   setIsLoading_Signin(isLoadingAuth);
+    // }
+
+    // if (isSuccessAuth) {
+    //   notify_success();
+    //   setInput({ ...input, email: "", password: "" });
+    //   setTimeout(() => {
+    //     setIsLoading_Signin(isLoadingAuth);
+    //     navigate("/home");
+    //   }, 4000);
+    // }
+
+    // console.log(isSuccessAuth);
 
     switch (responseMessage) {
       case "Email not found!":
@@ -136,7 +178,8 @@ const Signin = () => {
               className="bg-slate-700 text-white font-bold p-3 rounded-lg uppercase hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed h-[50px] transition-all duration-500 ease-in-out "
             >
               {isLoading_Signin == true &&
-              response?.data.login_method === "System" ? (
+              response?.status == 200 &&
+              response?.data?.login_method === "System" ? (
                 <>
                   <div className="flex justify-center items-center text-[20px]">
                     <AiOutlineLoading3Quarters className="animate-spin" />
@@ -149,9 +192,8 @@ const Signin = () => {
               )}
             </button>
             <OAuth
-              isSuccessAuth={isSuccessAuth}
-              response={response}
-              isLoading_Signin={isLoading_Signin}
+              isLoading_Signin_Google={isLoading_Signin_Google}
+              setIsLoading_Signin_Google={setIsLoading_Signin_Google}
             />
           </form>
 

@@ -20,6 +20,12 @@ const Login_Google = async (googleUserData) => {
     localStorage.setItem("user_token", JSON.stringify(response.data.token));
     Cookies.set("user_token", response.data.token);
   }
+
+  return response;
+};
+
+const SignUp = async (input_data_signup) => {
+  const response = await axios.post(auth_API_URL + "signup", input_data_signup);
   return response;
 };
 
@@ -30,6 +36,7 @@ const CheckToken = async (token) => {
 
 const authService = {
   Login,
+  SignUp,
   CheckToken,
   Login_Google,
 };

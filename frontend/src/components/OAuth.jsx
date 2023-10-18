@@ -6,7 +6,7 @@ import { reset, login_user_google } from "../redux/features/auth/auth_slice";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 
-const OAuth = ({ isSuccessAuth, response }) => {
+const OAuth = ({ isSuccessAuth, response, isLoading_Signin }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { Auth_Login, isLoadingAuth, isErrorAuth, responseMessage } =
     useSelector((state) => state.Auth_Login);
@@ -26,7 +26,7 @@ const OAuth = ({ isSuccessAuth, response }) => {
         email: google_data_result.user.email,
         photo: google_data_result.user.photoURL,
       };
-      setIsLoading(isLoadingAuth);
+      setIsLoading(true);
       dispatch(login_user_google(googleUserData));
     } catch (error) {
       console.log("Could not signin with google!", error);
@@ -34,10 +34,7 @@ const OAuth = ({ isSuccessAuth, response }) => {
   };
 
   useEffect(() => {
-    if (
-      isLoadingAuth ||
-      (isSuccessAuth && response?.data.login_method === "System")
-    ) {
+    if (isLoading_Signin) {
       setIsLoading(true);
     }
 
@@ -51,23 +48,31 @@ const OAuth = ({ isSuccessAuth, response }) => {
         navigate("/home");
       }, 4000);
     }
-  }, [Auth_Login, isLoadingAuth, isErrorAuth, responseMessage]);
+  }, [
+    Auth_Login,
+    isLoadingAuth,
+    isErrorAuth,
+    responseMessage,
+    isLoading_Signin,
+  ]);
 
   return (
     <button
       disabled={isLoading ? true : false}
       onClick={Signin_With_Google}
       type="button"
-      className="bg-red-700 text-white p-3 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed uppercase hover:opacity-80 h-[50px]"
+      className="bg-red-700 text-white font-bold p-3 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed uppercase hover:opacity-75 h-[50px] transition-all duration-500 ease-in-out"
     >
-      {isLoading == true ? (
+      {isLoading == true && response?.data.login_method !== "System" ? (
         <>
           <div className="flex justify-center items-center text-[20px]">
             <AiOutlineLoading3Quarters className="animate-spin" />
           </div>
         </>
       ) : (
-        "Continue with google"
+        <>
+          <span>Continue with google</span>
+        </>
       )}
     </button>
   );

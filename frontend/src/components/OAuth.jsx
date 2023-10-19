@@ -88,6 +88,8 @@ const OAuth = ({ isLoading_Signin, setIsLoading_Signin }) => {
     response_Login,
   ]);
 
+  console.log(isLoading_Signup_Google);
+
   return (
     <button
       disabled={isLoading || loading_animation ? true : false}

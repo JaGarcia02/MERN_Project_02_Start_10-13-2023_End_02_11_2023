@@ -35,6 +35,16 @@ const Signin = () => {
     });
   };
 
+  const notify_success_google = () => {
+    toast.success("Signing in to Google, Please wait. . .", {
+      position: "bottom-left",
+      hideProgressBar: false,
+      autoClose: 3000,
+      pauseOnHover: false,
+      theme: "colored",
+    });
+  };
+
   const notify_error_403_email = () => {
     toast.error(" Email not found, please try again or signup!", {
       position: "bottom-left",
@@ -80,13 +90,25 @@ const Signin = () => {
     }
 
     if (isSuccessAuth_Google) {
-      notify_success();
-      setIsLoading_Signin(true);
-      setLoading_Animation(true);
-      setTimeout(() => {
-        setIsLoading_Signin(false);
-        setLoading_Animation(false);
-      }, 4000);
+      if (response_Google?.status == 201) {
+        notify_success_google();
+        setIsLoading_Signin(true);
+        setLoading_Animation(true);
+        setTimeout(() => {
+          setIsLoading_Signin(false);
+          setLoading_Animation(false);
+        }, 4000);
+      }
+
+      if (response_Google?.status == 200) {
+        notify_success();
+        setIsLoading_Signin(true);
+        setLoading_Animation(true);
+        setTimeout(() => {
+          setIsLoading_Signin(false);
+          setLoading_Animation(false);
+        }, 4000);
+      }
     }
 
     if (isSuccessAuth_Login) {

@@ -6,7 +6,7 @@ import { reset, login_user_google } from "../redux/features/auth/auth_slice";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 
-const OAuth = ({ isLoading_Signin, setIsLoading_Signin }) => {
+const OAuth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [loading_animation, setLoading_Animation] = useState(false);
   const {
@@ -72,7 +72,7 @@ const OAuth = ({ isLoading_Signin, setIsLoading_Signin }) => {
     if (isSuccessAuth_Google) {
       setTimeout(() => {
         setIsLoading(isLoadingAuth_Google);
-        navigate("/home");
+        // navigate("/home");
       }, 4000);
     }
   }, [
@@ -87,8 +87,6 @@ const OAuth = ({ isLoading_Signin, setIsLoading_Signin }) => {
     response_Signup,
     response_Login,
   ]);
-
-  console.log(isLoading_Signup_Google);
 
   return (
     <button

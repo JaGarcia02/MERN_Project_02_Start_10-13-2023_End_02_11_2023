@@ -72,7 +72,7 @@ const OAuth = () => {
     if (isSuccessAuth_Google) {
       setTimeout(() => {
         setIsLoading(isLoadingAuth_Google);
-        // navigate("/home");
+        navigate("/home");
       }, 4000);
     }
   }, [

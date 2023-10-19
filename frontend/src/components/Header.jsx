@@ -13,17 +13,22 @@ const Header = () => {
     isErrorAuth,
     isSuccessAuth,
     responseMessage,
+    response,
   } = useSelector((state) => state.Auth_User);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const decoded_token = jwt_decode(Cookie.get("user_token"));
+  const [decoded_token_data, setDecoded_Token_Data] = useState("");
+  const { email, password, photo, username } = decoded_token_data;
   const token = {
     token: Cookie.get("user_token"),
   };
 
-  console.log(decoded_token);
-
   useEffect(() => {
+    const decoded_token = jwt_decode(Cookie.get("user_token"));
+    const LocalStorage_Token = {
+      token: localStorage.getItem("user_token"),
+    };
+
     if (isErrorAuth) {
       alert("Your session has expired, Please Signin again!\nSystem Admin");
       Cookie.remove("user_token");
@@ -31,8 +36,20 @@ const Header = () => {
       navigate("/");
       location.reload();
     }
+
+    if (JSON.stringify(Cookie.get("user_token")) === LocalStorage_Token.token) {
+      setDecoded_Token_Data(decoded_token);
+    }
+
     dispatch(reset());
-  }, [Auth_User, isLoadingAuth, isSuccessAuth, isErrorAuth, responseMessage]);
+  }, [
+    Auth_User,
+    isLoadingAuth,
+    isSuccessAuth,
+    isErrorAuth,
+    responseMessage,
+    response,
+  ]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -66,7 +83,7 @@ const Header = () => {
   return (
     <header className="bg-slate-200 shadow-md ">
       <div className="flex justify-between items-center max-w-6xl mx-auto p-3">
-        <Link to={"/"}>
+        <Link to={"/home"}>
           <h1 className="font-bold text-sm sm:text-xl flex flex-wrap">
             <span className="text-slate-500">JaCorp</span>
             <span className="text-slate-700">Estate</span>
@@ -80,7 +97,7 @@ const Header = () => {
           />
           <FaSearch className="text-slate-600" />
         </form>
-        <ul className="flex gap-4 text-slate-700 cursor-pointer font-semibold">
+        <ul className="flex items-center gap-4 text-slate-700 cursor-pointer font-semibold">
           <Link to={"/home"}>
             <li
               className="hidden sm:inline hover:underline" // this will hide the home list if the screen size is small
@@ -91,9 +108,13 @@ const Header = () => {
           <Link to={"/about"}>
             <li className="hidden sm:inline hover:underline">About</li>
           </Link>
-          <Link to={"#"}>
+          <Link to={"/profile"}>
             {/* <li className="hover:underline">Login</li> */}
-            <img src="" alt="" />
+            <img
+              className="rounded-full h-8 w-8 object-cover"
+              src={photo}
+              alt=""
+            />
           </Link>
         </ul>
       </div>

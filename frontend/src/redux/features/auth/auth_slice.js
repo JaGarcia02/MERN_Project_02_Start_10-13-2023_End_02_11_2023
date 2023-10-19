@@ -122,6 +122,12 @@ export const authSlice = createSlice({
       state.isSuccessAuth_Google = false;
       state.isErrorAuth_Google = false;
       state.responseMessage_Google = "";
+
+      // Default //
+      state.isLoadingAuth = false;
+      state.isSuccessAuth = false;
+      state.isErrorAuth = false;
+      state.responseMessage = "";
     },
   },
 

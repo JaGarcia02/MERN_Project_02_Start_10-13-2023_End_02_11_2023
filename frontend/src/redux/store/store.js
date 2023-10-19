@@ -7,7 +7,7 @@ import auth_reducer from "../features/auth/auth_slice";
 import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
-const rootReducer = combineReducers({ Auth_Login: auth_reducer });
+const rootReducer = combineReducers({ Auth_User: auth_reducer });
 
 const persistConfig = {
   key: "root",

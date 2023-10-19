@@ -6,28 +6,47 @@ import "react-toastify/dist/ReactToastify.css";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import OAuth from "../components/OAuth";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  login_user_google,
-  reset,
-  signup_user,
-} from "../redux/features/auth/auth_slice";
+import { reset, signup_user } from "../redux/features/auth/auth_slice";
 
 const Signup = () => {
   const [input, setInput] = useState({ username: "", email: "", password: "" });
   const [isLoading_Signup, setIsLoading_Signup] = useState(false);
+  const [loading_animation, setLoading_Animation] = useState(false);
   const {
-    Auth_Login,
-    isSuccessAuth,
-    isLoadingAuth,
-    isErrorAuth,
-    responseMessage,
-    response,
-  } = useSelector((state) => state.Auth_Login);
+    Auth_User,
+    response_Signup,
+    isLoadingAuth_Signup,
+    isSuccessAuth_Signup,
+    isErrorAuth_Signup,
+    responseMessage_Signup,
+    isSuccessAuth_Google,
+    response_Google,
+  } = useSelector((state) => state.Auth_User);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const notify_success = () => {
     toast.success("Signup Success!", {
+      position: "bottom-left",
+      hideProgressBar: false,
+      autoClose: 3000,
+      pauseOnHover: false,
+      theme: "colored",
+    });
+  };
+
+  const notify_success_google = () => {
+    toast.success("Signup Success, Now Signing in. . .", {
+      position: "bottom-left",
+      hideProgressBar: false,
+      autoClose: 3000,
+      pauseOnHover: false,
+      theme: "colored",
+    });
+  };
+
+  const notify_success_google_signingin = () => {
+    toast.success("Now Signing in, Please wait. . .", {
       position: "bottom-left",
       hideProgressBar: false,
       autoClose: 3000,
@@ -75,7 +94,6 @@ const Signup = () => {
       password: input.password,
     };
 
-    setIsLoading_Signup(true);
     dispatch(signup_user(input_data_signup));
     // axios
     //   .post("http://localhost:5555/api/auth/signup", {
@@ -114,24 +132,43 @@ const Signup = () => {
   };
 
   useEffect(() => {
-    if (isErrorAuth) {
-      setIsLoading_Signup(isLoadingAuth);
+    if (isLoadingAuth_Signup) {
+      setIsLoading_Signup(true);
+      setLoading_Animation(true);
     }
 
-    if (isErrorAuth) {
-      setIsLoading_Signup(isLoadingAuth);
+    if (isErrorAuth_Signup) {
+      setIsLoading_Signup(false);
+      setLoading_Animation(false);
     }
 
-    if (isSuccessAuth) {
+    if (isSuccessAuth_Google) {
+      if (response_Google?.status == 201) {
+        notify_success_google();
+        setLoading_Animation(true);
+        setTimeout(() => {
+          setLoading_Animation(false);
+        }, 4000);
+      }
+
+      if (response_Google?.status == 200) {
+        notify_success_google_signingin();
+        setLoading_Animation(true);
+        setTimeout(() => {
+          setLoading_Animation(false);
+        }, 4000);
+      }
+    }
+
+    if (isSuccessAuth_Signup) {
       notify_success();
-      setInput({ ...input, username: "", email: "", password: "" });
       setTimeout(() => {
-        setIsLoading_Signup(isLoadingAuth);
+        setIsLoading_Signup(isLoadingAuth_Signup);
         navigate("/");
       }, 4000);
     }
 
-    switch (responseMessage) {
+    switch (responseMessage_Signup) {
       case "email and username is already taken!":
         notify_error_403_username_email();
         break;
@@ -146,13 +183,16 @@ const Signup = () => {
 
     dispatch(reset());
   }, [
-    Auth_Login,
-    isSuccessAuth,
-    isLoadingAuth,
-    isErrorAuth,
-    responseMessage,
-    response,
+    Auth_User,
+    response_Signup,
+    isLoadingAuth_Signup,
+    isSuccessAuth_Signup,
+    isErrorAuth_Signup,
+    responseMessage_Signup,
+    isSuccessAuth_Google,
+    response_Google,
   ]);
+
   return (
     <>
       <div className="mx-auto h-screen flex justify-center items-center">
@@ -160,11 +200,7 @@ const Signup = () => {
           <h1 className="text-3xl text-center font-semibold my-7">
             Register Account
           </h1>
-          <form
-            action=""
-            onSubmit={submitInput}
-            className="flex flex-col gap-4 "
-          >
+          <form onSubmit={submitInput} className="flex flex-col gap-4 ">
             <input
               type="text"
               placeholder="username"
@@ -172,6 +208,7 @@ const Signup = () => {
               id="username"
               onChange={(e) => setInput({ ...input, username: e.target.value })}
               value={input.username}
+              disabled={isLoading_Signup || loading_animation ? true : false}
               required
             />
             <input
@@ -181,6 +218,7 @@ const Signup = () => {
               id="email"
               onChange={(e) => setInput({ ...input, email: e.target.value })}
               value={input.email}
+              disabled={isLoading_Signup || loading_animation ? true : false}
               required
             />
             <input
@@ -190,13 +228,14 @@ const Signup = () => {
               id="passowrd"
               onChange={(e) => setInput({ ...input, password: e.target.value })}
               value={input.password}
+              disabled={isLoading_Signup || loading_animation ? true : false}
               required
             />
             <button
-              disabled={isLoading_Signup ? true : false}
+              disabled={isLoading_Signup || loading_animation ? true : false}
               className="bg-slate-700 text-white font-bold p-3 rounded-lg uppercase hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed h-[50px] transition-all duration-500 ease-in-out "
             >
-              {isLoading_Signup == true ? (
+              {isLoading_Signup && !response_Signup?.data?.login_method ? (
                 <>
                   <div className="flex justify-center items-center text-[20px]">
                     <AiOutlineLoading3Quarters className="animate-spin" />
@@ -208,7 +247,7 @@ const Signup = () => {
                 </>
               )}
             </button>
-            <OAuth isSuccessAuth={isSuccessAuth} response={response} />
+            <OAuth />
           </form>
           <div className="flex gap-2 mt-5">
             <p>Have an account?</p>

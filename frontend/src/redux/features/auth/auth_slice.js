@@ -3,6 +3,28 @@ import Cookie from "js-cookie";
 import authService from "./auth_service";
 
 const initialState = {
+  // For Login //
+  response_Login: "",
+  isLoadingAuth_Login: false,
+  isSuccessAuth_Login: false,
+  isErrorAuth_Login: false,
+  responseMessage_Login: "",
+
+  // For Signup //
+  response_Signup: "",
+  isLoadingAuth_Signup: false,
+  isSuccessAuth_Signup: false,
+  isErrorAuth_Signup: false,
+  responseMessage_Signup: "",
+
+  // For Google Signin and Signup //
+  response_Google: "",
+  isLoadingAuth_Google: false,
+  isSuccessAuth_Google: false,
+  isErrorAuth_Google: false,
+  responseMessage_Google: "",
+
+  // Default //
   response: "",
   isLoadingAuth: false,
   isSuccessAuth: false,
@@ -83,10 +105,23 @@ export const authSlice = createSlice({
   initialState,
   reducers: {
     reset: (state) => {
-      state.isLoadingAuth = false;
-      state.isSuccessAuth = false;
-      state.isErrorAuth = false;
-      state.responseMessage = "";
+      // For Login //
+      state.isLoadingAuth_Login = false;
+      state.isSuccessAuth_Login = false;
+      state.isErrorAuth_Login = false;
+      state.responseMessage_Login = "";
+
+      // For Signin //
+      state.isLoadingAuth_Signup = false;
+      state.isSuccessAuth_Signup = false;
+      state.isErrorAuth_Signup = false;
+      state.responseMessage_Signup = "";
+
+      // For Google Signin and Signup //
+      state.isLoadingAuth_Google = false;
+      state.isSuccessAuth_Google = false;
+      state.isErrorAuth_Google = false;
+      state.responseMessage_Google = "";
     },
   },
 
@@ -94,50 +129,50 @@ export const authSlice = createSlice({
     builder
       // Login -states-
       .addCase(login_user.pending, (state, action) => {
-        state.isLoadingAuth = true;
+        state.isLoadingAuth_Login = true;
       })
       .addCase(login_user.fulfilled, (state, action) => {
-        state.isLoadingAuth = false;
-        state.isSuccessAuth = true;
-        state.response = action.payload;
+        state.isLoadingAuth_Login = false;
+        state.isSuccessAuth_Login = true;
+        state.response_Login = action.payload;
       })
       .addCase(login_user.rejected, (state, action) => {
-        state.isLoadingAuth = false;
-        state.isErrorAuth = true;
-        state.responseMessage = action.payload;
-        state.response = null;
+        state.isLoadingAuth_Login = false;
+        state.isErrorAuth_Login = true;
+        state.responseMessage_Login = action.payload;
+        state.response_Login = null;
       })
 
       // Login Google -states-
       .addCase(login_user_google.pending, (state, action) => {
-        state.isLoadingAuth = true;
+        state.isLoadingAuth_Google = true;
       })
       .addCase(login_user_google.fulfilled, (state, action) => {
-        state.isLoadingAuth = false;
-        state.isSuccessAuth = true;
-        state.response = action.payload;
+        state.isLoadingAuth_Google = false;
+        state.isSuccessAuth_Google = true;
+        state.response_Google = action.payload;
       })
       .addCase(login_user_google.rejected, (state, action) => {
-        state.isLoadingAuth = false;
-        state.isErrorAuth = true;
-        state.responseMessage = action.payload;
-        state.response = null;
+        state.isLoadingAuth_Google = false;
+        state.isErrorAuth_Google = true;
+        state.responseMessage_Google = action.payload;
+        state.response_Google = null;
       })
 
       // Signup -states-
       .addCase(signup_user.fulfilled, (state, action) => {
-        state.isLoadingAuth = false;
-        state.isSuccessAuth = true;
-        state.response = action.payload;
+        state.isLoadingAuth_Signup = false;
+        state.isSuccessAuth_Signup = true;
+        state.response_Signup = action.payload;
       })
       .addCase(signup_user.rejected, (state, action) => {
-        state.isLoadingAuth = false;
-        state.isErrorAuth = true;
-        state.responseMessage = action.payload;
-        state.response = null;
+        state.isLoadingAuth_Signup = false;
+        state.isErrorAuth_Signup = true;
+        state.responseMessage_Signup = action.payload;
+        state.response_Signup = null;
       })
       .addCase(signup_user.pending, (state, action) => {
-        state.isLoadingAuth = true;
+        state.isLoadingAuth_Signup = true;
       })
 
       //   // Logout -states-

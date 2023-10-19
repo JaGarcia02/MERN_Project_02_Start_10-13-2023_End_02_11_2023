@@ -4,20 +4,24 @@ import { Link, useNavigate } from "react-router-dom";
 import { check_token, reset } from "../redux/features/auth/auth_slice";
 import { useDispatch, useSelector } from "react-redux";
 import Cookie from "js-cookie";
+import jwt_decode from "jwt-decode";
 
 const Header = () => {
   const {
-    Auth_Login,
+    Auth_User,
     isLoadingAuth,
     isErrorAuth,
     isSuccessAuth,
     responseMessage,
-  } = useSelector((state) => state.Auth_Login);
+  } = useSelector((state) => state.Auth_User);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const decoded_token = jwt_decode(Cookie.get("user_token"));
   const token = {
     token: Cookie.get("user_token"),
   };
+
+  console.log(decoded_token);
 
   useEffect(() => {
     if (isErrorAuth) {
@@ -28,7 +32,7 @@ const Header = () => {
       location.reload();
     }
     dispatch(reset());
-  }, [Auth_Login, isLoadingAuth, isSuccessAuth, isErrorAuth, responseMessage]);
+  }, [Auth_User, isLoadingAuth, isSuccessAuth, isErrorAuth, responseMessage]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -87,8 +91,9 @@ const Header = () => {
           <Link to={"/about"}>
             <li className="hidden sm:inline hover:underline">About</li>
           </Link>
-          <Link to={"/"}>
-            <li className="hover:underline">Login</li>
+          <Link to={"#"}>
+            {/* <li className="hover:underline">Login</li> */}
+            <img src="" alt="" />
           </Link>
         </ul>
       </div>

@@ -10,14 +10,17 @@ import OAuth from "../components/OAuth";
 const Signin = () => {
   const [input, setInput] = useState({ email: "", password: "" });
   const [isLoading_Signin, setIsLoading_Signin] = useState(false);
+  const [loading_animation, setLoading_Animation] = useState(false);
   const {
-    Auth_Login,
-    isLoadingAuth,
-    isErrorAuth,
-    isSuccessAuth,
-    responseMessage,
-    response,
-  } = useSelector((state) => state.Auth_Login);
+    Auth_User,
+    response_Login,
+    isLoadingAuth_Login,
+    isSuccessAuth_Login,
+    isErrorAuth_Login,
+    responseMessage_Login,
+    isSuccessAuth_Google,
+    response_Google,
+  } = useSelector((state) => state.Auth_User);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -61,29 +64,42 @@ const Signin = () => {
       password: input.password,
     };
 
-    setIsLoading_Signin(true);
+    // setIsLoading_Signin(true);
     dispatch(login_user(input_data_login));
   };
 
   useEffect(() => {
-    if (isSuccessAuth && response?.data.login_method !== "System") {
+    if (isLoadingAuth_Login) {
       setIsLoading_Signin(true);
+      setLoading_Animation(true);
     }
 
-    if (isErrorAuth) {
-      setIsLoading_Signin(isLoadingAuth);
+    if (isErrorAuth_Login) {
+      setIsLoading_Signin(false);
+      setLoading_Animation(false);
     }
 
-    if (isSuccessAuth) {
+    if (isSuccessAuth_Google) {
       notify_success();
-      setInput({ ...input, email: "", password: "" });
+      setIsLoading_Signin(true);
+      setLoading_Animation(true);
       setTimeout(() => {
-        setIsLoading_Signin(isLoadingAuth);
+        setIsLoading_Signin(false);
+        setLoading_Animation(false);
+      }, 4000);
+    }
+
+    if (isSuccessAuth_Login) {
+      notify_success();
+      // setInput({ ...input, email: "", password: "" });
+      setTimeout(() => {
+        setIsLoading_Signin(isLoadingAuth_Login);
+        setLoading_Animation(isLoadingAuth_Login);
         navigate("/home");
       }, 4000);
     }
 
-    switch (responseMessage) {
+    switch (responseMessage_Login) {
       case "Email not found!":
         notify_error_403_email();
         break;
@@ -95,12 +111,15 @@ const Signin = () => {
 
     dispatch(reset());
   }, [
-    Auth_Login,
-    isLoadingAuth,
-    isSuccessAuth,
-    isErrorAuth,
-    responseMessage,
-    response,
+    Auth_User,
+    response_Login,
+    isLoadingAuth_Login,
+    isSuccessAuth_Login,
+    isErrorAuth_Login,
+    responseMessage_Login,
+    isSuccessAuth_Google,
+    response_Google,
+    loading_animation,
   ]);
 
   return (
@@ -120,6 +139,7 @@ const Signin = () => {
               id="email"
               onChange={(e) => setInput({ ...input, email: e.target.value })}
               value={input.email}
+              disabled={isLoading_Signin || isLoadingAuth_Login ? true : false}
               required
             />
             <input
@@ -129,14 +149,16 @@ const Signin = () => {
               id="passowrd"
               onChange={(e) => setInput({ ...input, password: e.target.value })}
               value={input.password}
+              disabled={isLoading_Signin || isLoadingAuth_Login ? true : false}
               required
             />
             <button
-              disabled={isLoading_Signin ? true : false}
+              disabled={isLoading_Signin || isLoadingAuth_Login ? true : false}
               className="bg-slate-700 text-white font-bold p-3 rounded-lg uppercase hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed h-[50px] transition-all duration-500 ease-in-out "
             >
-              {isLoading_Signin == true &&
-              response?.data.login_method === "System" ? (
+              {isLoading_Signin &&
+              isLoadingAuth_Login &&
+              response_Login?.data?.login_method == "System" ? (
                 <>
                   <div className="flex justify-center items-center text-[20px]">
                     <AiOutlineLoading3Quarters className="animate-spin" />
@@ -148,11 +170,7 @@ const Signin = () => {
                 </>
               )}
             </button>
-            <OAuth
-              isSuccessAuth={isSuccessAuth}
-              response={response}
-              isLoading_Signin={isLoading_Signin}
-            />
+            <OAuth />
           </form>
 
           <div className="flex gap-2 mt-5">

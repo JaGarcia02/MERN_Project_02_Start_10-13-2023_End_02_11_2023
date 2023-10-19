@@ -66,22 +66,13 @@ export const SignIn = async (req, res) => {
       return res.status(403).json({ system_message: "Wrong password!" });
     }
 
-    // jwt token signing
-    const token = jwt.sign(
-      {
-        id: check_email_exist._id,
-        username: check_email_exist.username,
-        email: check_email_exist.email,
-      },
-      process.env.JWT_SECRET
-    );
-
     if (check_email_exist && check_password_match) {
       const Token = generate_token(
-        check_email_exist._id,
-        check_email_exist.username,
-        check_email_exist.email,
-        check_email_exist.password
+        check_email_exist?._id,
+        check_email_exist?.username,
+        check_email_exist?.email,
+        check_email_exist?.password,
+        check_email_exist?.photo
       );
       return res
         .status(200)
@@ -121,11 +112,11 @@ export const SignIn_Google = async (req, res) => {
     const check_email_exist = await User.findOne({ email: email });
     if (check_email_exist) {
       const Token = generate_token_google(
-        check_email_exist._id,
-        check_email_exist.username,
-        check_email_exist.email,
-        check_email_exist.password,
-        check_email_exist.photo
+        check_email_exist?._id,
+        check_email_exist?.username,
+        check_email_exist?.email,
+        check_email_exist?.password,
+        check_email_exist?.photo
       );
       return res
         .status(200)
@@ -150,7 +141,9 @@ export const SignIn_Google = async (req, res) => {
       );
 
       await User.create({
-        username: username,
+        username:
+          username.split(" ").join("").toLowerCase() +
+          Math.random().toString(36).split(-4),
         email: email,
         password: passwordHash_googleUser,
         photo: photo,
@@ -271,13 +264,14 @@ const generate_token_google = (_id, username, email, password, photo) => {
   );
 };
 
-const generate_token = (_id, username, email, password) => {
+const generate_token = (_id, username, email, password, photo) => {
   return jwt.sign(
     {
       _id,
       username,
       email,
       password,
+      photo,
     },
     process.env.JWT_SECRET,
     { expiresIn: "10m" }

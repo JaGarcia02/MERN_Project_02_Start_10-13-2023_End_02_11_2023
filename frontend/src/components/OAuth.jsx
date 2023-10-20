@@ -59,21 +59,22 @@ const OAuth = () => {
       setLoading_Animation(true);
       setTimeout(() => {
         setLoading_Animation(false);
-      }, 4000);
+      }, 2000);
     }
 
     if (isSuccessAuth_Signup) {
       setLoading_Animation(true);
       setTimeout(() => {
         setLoading_Animation(false);
-      }, 4000);
+      }, 2000);
     }
 
     if (isSuccessAuth_Google) {
       setTimeout(() => {
         setIsLoading(isLoadingAuth_Google);
         navigate("/home");
-      }, 4000);
+        window.location.reload();
+      }, 2000);
     }
   }, [
     Auth_User,

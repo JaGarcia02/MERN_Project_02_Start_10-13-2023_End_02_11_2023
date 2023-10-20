@@ -29,7 +29,7 @@ const Signin = () => {
     toast.success("Login Successful!", {
       position: "bottom-left",
       hideProgressBar: false,
-      autoClose: 3000,
+      autoClose: 1000,
       pauseOnHover: false,
       theme: "colored",
     });
@@ -39,7 +39,7 @@ const Signin = () => {
     toast.success("Signing in to Google, Please wait. . .", {
       position: "bottom-left",
       hideProgressBar: false,
-      autoClose: 3000,
+      autoClose: 1000,
       pauseOnHover: false,
       theme: "colored",
     });
@@ -91,34 +91,34 @@ const Signin = () => {
 
     if (isSuccessAuth_Google) {
       if (response_Google?.status == 201) {
-        notify_success_google();
+        // notify_success_google();
         setIsLoading_Signin(true);
         setLoading_Animation(true);
         setTimeout(() => {
           setIsLoading_Signin(false);
           setLoading_Animation(false);
-        }, 4000);
+        }, 2000);
       }
 
       if (response_Google?.status == 200) {
-        notify_success();
+        // notify_success();
         setIsLoading_Signin(true);
         setLoading_Animation(true);
         setTimeout(() => {
           setIsLoading_Signin(false);
           setLoading_Animation(false);
-        }, 4000);
+        }, 2000);
       }
     }
 
     if (isSuccessAuth_Login) {
-      notify_success();
+      // notify_success();
       // setInput({ ...input, email: "", password: "" });
       setTimeout(() => {
         setIsLoading_Signin(isLoadingAuth_Login);
         setLoading_Animation(isLoadingAuth_Login);
         navigate("/home");
-      }, 4000);
+      }, 2000);
     }
 
     switch (responseMessage_Login) {

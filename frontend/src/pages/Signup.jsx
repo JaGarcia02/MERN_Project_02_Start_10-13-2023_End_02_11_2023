@@ -29,7 +29,7 @@ const Signup = () => {
     toast.success("Signup Success!", {
       position: "bottom-left",
       hideProgressBar: false,
-      autoClose: 3000,
+      autoClose: 2000,
       pauseOnHover: false,
       theme: "colored",
     });
@@ -39,7 +39,7 @@ const Signup = () => {
     toast.success("Signup Success, Now Signing in. . .", {
       position: "bottom-left",
       hideProgressBar: false,
-      autoClose: 3000,
+      autoClose: 2000,
       pauseOnHover: false,
       theme: "colored",
     });
@@ -148,15 +148,15 @@ const Signup = () => {
         setLoading_Animation(true);
         setTimeout(() => {
           setLoading_Animation(false);
-        }, 4000);
+        }, 2000);
       }
 
       if (response_Google?.status == 200) {
-        notify_success_google_signingin();
+        // notify_success_google_signingin();
         setLoading_Animation(true);
         setTimeout(() => {
           setLoading_Animation(false);
-        }, 4000);
+        }, 2000);
       }
     }
 
@@ -165,7 +165,7 @@ const Signup = () => {
       setTimeout(() => {
         setIsLoading_Signup(isLoadingAuth_Signup);
         navigate("/");
-      }, 4000);
+      }, 2000);
     }
 
     switch (responseMessage_Signup) {

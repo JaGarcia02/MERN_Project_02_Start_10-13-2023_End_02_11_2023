@@ -15,10 +15,21 @@ import { useDispatch, useSelector } from "react-redux";
 import { check_token } from "./redux/features/auth/auth_slice";
 
 function App() {
+  // const [token_data, setToken_Data] = useState({});
+
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     const token = {
+  //       token: Cookie.get("user_token"),
+  //     };
+  //     setToken_Data(token);
+  //   }, 1000);
+  // }, [token_data]);
+
   return (
     <>
       <div className="App">
-        {/* <Header /> : <HeaderPublic /> */}
+        {/* {!token_data.token ? <HeaderPublic /> : <Header />} */}
         <Routes>
           {/* Public Route */}
           <Route path="/" element={<Signin />} />

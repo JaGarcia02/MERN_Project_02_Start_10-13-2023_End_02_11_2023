@@ -63,8 +63,7 @@ const Header = () => {
         localStorage.removeItem("user_token");
         navigate("/");
         location.reload();
-      }
-      if (
+      } else if (
         JSON.stringify(Cookie.get("user_token")) !== LocalStorage_Token.token
       ) {
         alert(

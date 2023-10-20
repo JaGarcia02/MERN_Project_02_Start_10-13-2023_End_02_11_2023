@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Navigate, Outlet, useNavigate } from "react-router-dom";
 import Cookie from "js-cookie";
 import jwt_decode from "jwt-decode";
 import { check_token } from "../redux/features/auth/auth_slice";
 
 const PrivateRoute = () => {
+  const dispatch = useDispatch();
   const token = {
     token: Cookie.get("user_token"),
   };

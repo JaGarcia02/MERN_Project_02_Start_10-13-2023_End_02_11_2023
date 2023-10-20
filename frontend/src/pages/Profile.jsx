@@ -9,6 +9,7 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import { app } from "../firebase/google_firebase";
+import axios from "axios";
 
 const Profile = () => {
   const fileRef = useRef(null);
@@ -18,7 +19,14 @@ const Profile = () => {
   const [trigger_button, setTrigger_Button] = useState(false);
   const [uploadPercentage, setUploadPercentage] = useState(0);
   const [uploadError, setUploadError] = useState(false);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+    photo: "",
+  });
+
+  console.log(formData.photo);
 
   useEffect(() => {
     const decoded_token = jwt_decode(Cookie.get("user_token"));
@@ -35,6 +43,21 @@ const Profile = () => {
       handleFileUpload(file);
     }
   }, [file]);
+
+  useEffect(() => {
+    const decoded_token = jwt_decode(Cookie.get("user_token"));
+    axios
+      .get(`http://localhost:5555/api/user/get-user/${decoded_token._id}`)
+      .then((res) => {
+        setFormData({
+          ...formData,
+          username: res.data.username,
+          email: res.data.email,
+          password: res.data.password,
+          photo: res.data.photo,
+        });
+      });
+  }, []);
 
   const handleFileUpload = (file) => {
     const storage = getStorage(app);
@@ -62,6 +85,24 @@ const Profile = () => {
         });
       }
     );
+  };
+
+  const UpdateProfile = (e) => {
+    console.log(e);
+    e.preventDefault();
+    axios
+      .patch(
+        `http://localhost:5555/api/user/update-user/${decoded_token_data._id}`,
+        {
+          photo: formData.photo,
+        }
+      )
+      .then((res) => {
+        console.log("done");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
@@ -148,7 +189,10 @@ const Profile = () => {
             className="border-[2px] p-3 rounded-lg focus:outline-none"
             placeholder="password"
           />
-          <button className="bg-slate-700 text-white font-bold rounded-lg p-3 uppercase hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed h-[45px] transition-all duration-500 ease-in-out ">
+          <button
+            onClick={UpdateProfile}
+            className="bg-slate-700 text-white font-bold rounded-lg p-3 uppercase hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed h-[45px] transition-all duration-500 ease-in-out "
+          >
             update
           </button>
         </form>

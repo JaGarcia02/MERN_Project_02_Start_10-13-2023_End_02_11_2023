@@ -6,6 +6,7 @@ import UserRoutetr from "./routes/user_route.js";
 import AuthRouter from "./routes/auth_route.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import fs from "fs";
 
 const port = process.env.PORT || 3000;
 const app = express();
@@ -18,6 +19,22 @@ app.use(cookieParser());
 app.use("/api/user", UserRoutetr);
 app.use("/api/auth", AuthRouter);
 
+// Local Storage
+try {
+  if (!fs.existsSync("storage")) {
+    fs.mkdirSync("storage");
+  }
+  if (!fs.existsSync("./storage/profile_pictures")) {
+    fs.mkdirSync("./storage/profile_pictures");
+  }
+  if (!fs.existsSync("./storage/unit_pictures")) {
+    fs.mkdirSync("./storage/unit_pictures");
+  }
+} catch (error) {
+  console.log(error);
+}
+
+// Mongo Database
 mongoose
   .connect(process.env.MONGO_DB_URI, {
     useNewUrlParser: true,

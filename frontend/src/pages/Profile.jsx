@@ -13,10 +13,10 @@ import axios from "axios";
 
 const Profile = () => {
   const fileRef = useRef(null);
-  const [decoded_token_data, setDecoded_Token_Data] = useState("");
+  const decoded_token = jwt_decode(Cookie.get("user_token"));
   const [file, setFile] = useState(undefined);
-  const { email, password, photo, username } = decoded_token_data;
   const [trigger_button, setTrigger_Button] = useState(false);
+  const [trigger_disable, setTrigger_Disable] = useState(true);
   const [uploadPercentage, setUploadPercentage] = useState(0);
   const [uploadError, setUploadError] = useState(false);
   const [formData, setFormData] = useState({
@@ -26,26 +26,7 @@ const Profile = () => {
     photo: "",
   });
 
-  console.log(formData.photo);
-
   useEffect(() => {
-    const decoded_token = jwt_decode(Cookie.get("user_token"));
-    const LocalStorage_Token = {
-      token: localStorage.getItem("user_token"),
-    };
-    if (JSON.stringify(Cookie.get("user_token")) === LocalStorage_Token.token) {
-      setDecoded_Token_Data(decoded_token);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (file) {
-      handleFileUpload(file);
-    }
-  }, [file]);
-
-  useEffect(() => {
-    const decoded_token = jwt_decode(Cookie.get("user_token"));
     axios
       .get(`http://localhost:5555/api/user/get-user/${decoded_token._id}`)
       .then((res) => {
@@ -57,7 +38,11 @@ const Profile = () => {
           photo: res.data.photo,
         });
       });
-  }, []);
+    if (file) {
+      handleFileUpload(file);
+      setTrigger_Disable(false);
+    }
+  }, [file]);
 
   const handleFileUpload = (file) => {
     const storage = getStorage(app);
@@ -88,21 +73,26 @@ const Profile = () => {
   };
 
   const UpdateProfile = (e) => {
-    console.log(e);
     e.preventDefault();
-    axios
-      .patch(
-        `http://localhost:5555/api/user/update-user/${decoded_token_data._id}`,
-        {
-          photo: formData.photo,
-        }
-      )
-      .then((res) => {
-        console.log("done");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    if (!file) {
+      alert("empty");
+    } else {
+      axios
+        .patch(
+          `http://localhost:5555/api/user/update-user/${decoded_token._id}`,
+          {
+            photo: formData.photo,
+          }
+        )
+        .then((res) => {
+          setFile(undefined);
+          setTrigger_Disable(true);
+          window.location.reload();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
   return (
@@ -120,7 +110,7 @@ const Profile = () => {
           />
           <img
             className="rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2"
-            src={formData.photo || photo}
+            src={formData.photo}
             alt="profile"
             onClick={() => {
               trigger_button
@@ -173,14 +163,14 @@ const Profile = () => {
             name=""
             id=""
             className="border-[2px] p-3 rounded-lg focus:outline-none"
-            placeholder="username"
+            placeholder={formData.username}
           />
           <input
             type="email"
             name=""
             id=""
             className="border-[2px] p-3 rounded-lg focus:outline-none"
-            placeholder="email"
+            placeholder={formData.email}
           />
           <input
             type="password"
@@ -190,6 +180,7 @@ const Profile = () => {
             placeholder="password"
           />
           <button
+            disabled={trigger_disable ? true : false}
             onClick={UpdateProfile}
             className="bg-slate-700 text-white font-bold rounded-lg p-3 uppercase hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed h-[45px] transition-all duration-500 ease-in-out "
           >

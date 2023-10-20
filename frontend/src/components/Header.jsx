@@ -5,6 +5,7 @@ import { check_token, reset } from "../redux/features/auth/auth_slice";
 import { useDispatch, useSelector } from "react-redux";
 import Cookie from "js-cookie";
 import jwt_decode from "jwt-decode";
+import axios from "axios";
 
 const Header = () => {
   const {
@@ -17,28 +18,18 @@ const Header = () => {
   } = useSelector((state) => state.Auth_User);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [decoded_token_data, setDecoded_Token_Data] = useState("");
-  const { email, password, photo, username } = decoded_token_data;
+  const [user_data, setUser_Data] = useState([]);
   const token = {
     token: Cookie.get("user_token"),
   };
 
   useEffect(() => {
-    const decoded_token = jwt_decode(Cookie.get("user_token"));
-    const LocalStorage_Token = {
-      token: localStorage.getItem("user_token"),
-    };
-
     if (isErrorAuth) {
       alert("Your session has expired, Please Signin again!\nSystem Admin");
       Cookie.remove("user_token");
       localStorage.removeItem("user_token");
       navigate("/");
       location.reload();
-    }
-
-    if (JSON.stringify(Cookie.get("user_token")) === LocalStorage_Token.token) {
-      setDecoded_Token_Data(decoded_token);
     }
 
     dispatch(reset());
@@ -51,6 +42,7 @@ const Header = () => {
     response,
   ]);
 
+  // Checking token & for Authentication System
   useEffect(() => {
     const interval = setInterval(() => {
       const LocalStorage_Token = {
@@ -79,6 +71,17 @@ const Header = () => {
     }, 2000);
     return () => clearInterval(interval);
   }, []);
+
+  // Fetching Data from database
+  useEffect(() => {
+    const decoded_token = jwt_decode(Cookie.get("user_token"));
+    axios
+      .get(`http://localhost:5555/api/user/get-user/${decoded_token._id}`)
+      .then((res) => {
+        setUser_Data(res.data);
+      });
+  }, []);
+
   return (
     <header className="bg-slate-200 shadow-md ">
       <div className="flex justify-between items-center max-w-6xl mx-auto p-3">
@@ -111,7 +114,7 @@ const Header = () => {
             {/* <li className="hover:underline">Login</li> */}
             <img
               className="rounded-full h-8 w-8 object-cover"
-              src={photo}
+              src={user_data.photo}
               alt=""
             />
           </Link>

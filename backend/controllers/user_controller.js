@@ -34,3 +34,13 @@ export const UpdateUser = async (req, res) => {
     throw new Error(error);
   }
 };
+
+export const DeleteUser = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deleted_user = await User.deleteOne({ _id: id });
+    return res.status(200).json(deleted_user);
+  } catch (error) {
+    throw new Error(error);
+  }
+};

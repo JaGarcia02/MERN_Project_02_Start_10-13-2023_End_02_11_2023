@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Cookie from "js-cookie";
 import jwt_decode from "jwt-decode";
 import axios from "axios";
+import { reset_user } from "../redux/features/user/user_slice";
 
 const Header = () => {
   const {
@@ -16,6 +17,19 @@ const Header = () => {
     responseMessage,
     response,
   } = useSelector((state) => state.Auth_User);
+  const {
+    User,
+    isLoadingUser_Delete,
+    isSuccessUser_Delete,
+    isErrorUserUser_Delete,
+    responseMessage_Delete,
+    response_Delete,
+    isLoadingUser_UpdateProfilePicture,
+    isSuccessUser_UpdateProfilePicture,
+    isErrorUser_UpdateProfilePicture,
+    responseMessage_UpdateProfilePicture,
+    response_UpdateProfilePicture,
+  } = useSelector((state) => state.User);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [user_data, setUser_Data] = useState([]);
@@ -40,6 +54,21 @@ const Header = () => {
     isErrorAuth,
     responseMessage,
     response,
+  ]);
+
+  useEffect(() => {
+    if (isSuccessUser_UpdateProfilePicture) {
+      setUser_Data(response_UpdateProfilePicture.data);
+    }
+
+    dispatch(reset_user());
+  }, [
+    User,
+    isLoadingUser_UpdateProfilePicture,
+    isSuccessUser_UpdateProfilePicture,
+    isErrorUser_UpdateProfilePicture,
+    responseMessage_UpdateProfilePicture,
+    response_UpdateProfilePicture,
   ]);
 
   // Checking token & for Authentication System

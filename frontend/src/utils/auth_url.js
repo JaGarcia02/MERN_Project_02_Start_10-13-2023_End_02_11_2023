@@ -1,1 +1,3 @@
-export const auth_API_URL = "/server" + "/api/auth/";
+const API_AUTH_URL = "/server" + "/api/auth/";
+
+export { API_AUTH_URL };

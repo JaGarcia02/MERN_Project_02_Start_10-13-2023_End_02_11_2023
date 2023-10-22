@@ -1,0 +1,14 @@
+REAL ESTATE PROJECT
+
+Project state: Work in progress
+Status: 12.86%
+
+Development Traker:
+
+October 22/23 = {
+
+    Profile Picture functions with redux added in Profile Page and in Headers,
+    where if the user uploaded or remove the profile picture, there is no necessary
+    to refresh the page to load the current changes in the user profile
+
+}

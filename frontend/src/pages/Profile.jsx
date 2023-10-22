@@ -34,11 +34,18 @@ const Profile = () => {
   const decoded_token = jwt_decode(Cookie.get("user_token"));
   const [file, setFile] = useState(undefined);
   const [trigger_button, setTrigger_Button] = useState(false);
-  const [trigger_disable, setTrigger_Disable] = useState(true);
   const [uploadPercentage, setUploadPercentage] = useState(0);
   const [uploadError, setUploadError] = useState(false);
   const [loading_animation, setLoading_Animation] = useState(false);
-  const [formData, setFormData] = useState({
+  const [triggerPercentage, setTriggerPercentage] = useState(false);
+  const [messagePercentage, setMessagePercentage] = useState("");
+  const [from_input, setForm_Input] = useState({
+    username: "",
+    email: "",
+    password: "",
+    photo: "",
+  });
+  const [user_data, setUser_Data] = useState({
     username: "",
     email: "",
     password: "",
@@ -58,9 +65,24 @@ const Profile = () => {
     response_UpdateProfilePicture,
   } = useSelector((state) => state.User);
 
+  // ******************************************************************************************** Notification ******************************************************************************************** //
+  // ******************************************************************************************** Notification ******************************************************************************************** //
+  // ******************************************************************************************** Notification ******************************************************************************************** //
+  // ******************************************************************************************** Notification ******************************************************************************************** //
+
   // notfication tostify
   const notify_success = () => {
     toast.success("Account Successfully Removed!", {
+      position: "bottom-left",
+      hideProgressBar: false,
+      autoClose: 1000,
+      pauseOnHover: false,
+      theme: "colored",
+    });
+  };
+
+  const notify_success_update_profileDetails = () => {
+    toast.success("Account Details Updated!", {
       position: "bottom-left",
       hideProgressBar: false,
       autoClose: 1000,
@@ -109,25 +131,30 @@ const Profile = () => {
     });
   };
 
+  // ******************************************************************************************** Notification ******************************************************************************************** //
+  // ******************************************************************************************** Notification ******************************************************************************************** //
+  // ******************************************************************************************** Notification ******************************************************************************************** //
+  // ******************************************************************************************** Notification ******************************************************************************************** //
+
+  // ******************************************************************************************** useEffects ******************************************************************************************** //
+  // ******************************************************************************************** useEffects ******************************************************************************************** //
+  // ******************************************************************************************** useEffects ******************************************************************************************** //
+  // ******************************************************************************************** useEffects ******************************************************************************************** //
+
   useEffect(() => {
-    axios
-      .get(
-        // `http://localhost:5555/api/user/get-user/${decoded_token._id}`
-        API_USER_URL + REQ_METHOD_GET + decoded_token._id
-      )
-      .then((res) => {
-        setFormData({
-          ...formData,
-          username: res.data.username,
-          email: res.data.email,
-          password: res.data.password,
-          photo: res.data.photo,
-        });
+    axios.get(API_USER_URL + REQ_METHOD_GET + decoded_token._id).then((res) => {
+      setUser_Data({
+        ...user_data,
+        username: res.data.username,
+        email: res.data.email,
+        password: res.data.password,
+        photo: res.data.photo,
       });
+    });
     if (file) {
       handleFileUpload(file);
-      setTrigger_Disable(false);
     }
+    setFile(undefined);
   }, [file]);
 
   useState(() => {
@@ -151,14 +178,17 @@ const Profile = () => {
     }
 
     if (isSuccessUser_UpdateProfilePicture) {
-      setFormData({
-        ...formData,
+      setUser_Data({
+        ...user_data,
         username: response_UpdateProfilePicture.data.username,
         email: response_UpdateProfilePicture.data.email,
         password: response_UpdateProfilePicture.data.password,
         photo: response_UpdateProfilePicture.data.photo,
       });
     }
+    setTimeout(() => {
+      setLoading_Animation(false);
+    }, 3000);
 
     dispatch(reset_user());
   }, [
@@ -168,6 +198,26 @@ const Profile = () => {
     responseMessage_UpdateProfilePicture,
     response_UpdateProfilePicture,
   ]);
+
+  useEffect(() => {
+    if (uploadPercentage != 0 && uploadPercentage != 100) {
+      setTriggerPercentage(true);
+    } else {
+      setTriggerPercentage(false);
+    }
+    if (uploadPercentage === 100) {
+      setTrigger_Button(false);
+      setMessagePercentage(" Image successfully uploaded!");
+      setTimeout(() => {
+        setMessagePercentage("");
+      }, 5000);
+    }
+  }, [uploadPercentage]);
+
+  // ******************************************************************************************** useEffects ******************************************************************************************** //
+  // ******************************************************************************************** useEffects ******************************************************************************************** //
+  // ******************************************************************************************** useEffects ******************************************************************************************** //
+  // ******************************************************************************************** useEffects ******************************************************************************************** //
 
   const handleFileUpload = (file) => {
     const storage = getStorage(app);
@@ -187,11 +237,12 @@ const Profile = () => {
 
       (error) => {
         setUploadError(true);
-        setFormData("");
+        setUser_Data("");
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downlodURL) => {
-          setFormData({ ...formData, photo: downlodURL });
+          setForm_Input({ ...from_input, photo: downlodURL });
+          setUser_Data({ ...user_data, photo: downlodURL });
         });
       }
     );
@@ -199,33 +250,176 @@ const Profile = () => {
 
   const UpdateProfile = (e) => {
     e.preventDefault();
-    const profile_data = {
-      _id: decoded_token._id,
-      photo: formData.photo,
-    };
 
-    if (!file) {
-      alert("empty");
-    } else {
+    if (
+      from_input.username &&
+      !from_input.email &&
+      !from_input.password &&
+      !from_input.photo
+    ) {
+      const profile_data = {
+        _id: decoded_token._id,
+        username: from_input.username,
+      };
+
+      notify_success_update_profileDetails();
+      dispatch(update_profile_picture(profile_data));
+      setForm_Input({
+        ...from_input,
+        username: "",
+        email: "",
+        password: "",
+        photo: "",
+      });
+    } else if (
+      from_input.email &&
+      !from_input.username &&
+      !from_input.password &&
+      !from_input.photo
+    ) {
+      const profile_data = {
+        _id: decoded_token._id,
+        email: from_input.email,
+      };
+
+      notify_success_update_profileDetails();
+      dispatch(update_profile_picture(profile_data));
+      setForm_Input({
+        ...from_input,
+        username: "",
+        email: "",
+        password: "",
+        photo: "",
+      });
+    } else if (
+      from_input.password &&
+      !from_input.email &&
+      !from_input.username &&
+      !from_input.photo
+    ) {
+      const profile_data = {
+        _id: decoded_token._id,
+        password: from_input.password,
+      };
+
+      notify_success_update_profileDetails();
+      dispatch(update_profile_picture(profile_data));
+      setForm_Input({
+        ...from_input,
+        username: "",
+        email: "",
+        password: "",
+        photo: "",
+      });
+    } else if (
+      from_input.photo &&
+      !from_input.password &&
+      !from_input.email &&
+      !from_input.username
+    ) {
+      const profile_data = {
+        _id: decoded_token._id,
+        photo: user_data.photo,
+      };
+
       notify_success_update_picture();
       dispatch(update_profile_picture(profile_data));
-      // axios
-      //   .patch(
-      //     // `http://localhost:5555/api/user/update-user/${decoded_token._id}`,
-      //     API_USER_URL + REQ_METHOD_UPDATE + decoded_token._id,
-      //     {
-      //       photo: formData.photo,
-      //     }
-      //   )
-      //   .then((res) => {
-      //     setFile(undefined);
-      //     setTrigger_Disable(true);
-      //     window.location.reload();
-      //   })
-      //   .catch((error) => {
-      //     console.log(error);
-      //   });
+      setForm_Input({
+        ...from_input,
+        username: "",
+        email: "",
+        password: "",
+        photo: "",
+      });
+    } else if (
+      from_input.username &&
+      from_input.email &&
+      !from_input.password &&
+      !from_input.photo
+    ) {
+      const profile_data = {
+        _id: decoded_token._id,
+        username: from_input.username,
+        email: from_input.email,
+      };
+
+      notify_success_update_profileDetails();
+      dispatch(update_profile_picture(profile_data));
+      setForm_Input({
+        ...from_input,
+        username: "",
+        email: "",
+        password: "",
+        photo: "",
+      });
+    } else if (
+      from_input.username &&
+      from_input.email &&
+      from_input.password &&
+      !from_input.photo
+    ) {
+      const profile_data = {
+        _id: decoded_token._id,
+        username: from_input.username,
+        email: from_input.email,
+        password: from_input.password,
+      };
+
+      notify_success_update_profileDetails();
+      dispatch(update_profile_picture(profile_data));
+      setForm_Input({
+        ...from_input,
+        username: "",
+        email: "",
+        password: "",
+        photo: "",
+      });
+    } else if (
+      from_input.username &&
+      from_input.email &&
+      from_input.password &&
+      from_input.photo
+    ) {
+      const profile_data = {
+        _id: decoded_token._id,
+        username: from_input.username,
+        email: from_input.email,
+        password: from_input.password,
+        photo: user_data.photo,
+      };
+
+      notify_success_update_profileDetails();
+      dispatch(update_profile_picture(profile_data));
+      setForm_Input({
+        ...from_input,
+        username: "",
+        email: "",
+        password: "",
+        photo: "",
+      });
     }
+
+    // if (from_input.username || from_input.email || from_input.password) {
+    //   notify_success_update_profileDetails();
+    //   dispatch(update_profile_picture(profile_data));
+    // } else {
+    //   const profile_data = {
+    //     _id: decoded_token._id,
+    //     username: from_input.username,
+    //     email: from_input.email,
+    //     password: from_input.password,
+    //     photo: user_data.photo,
+    //   };
+    //   setForm_Input({
+    //     ...from_input,
+    //     username: "",
+    //     email: "",
+    //     password: "",
+    //     photo: "",
+    //   });
+    //   notify_success_update_picture();
+    //   dispatch(update_profile_picture(profile_data));
+    // }
   };
 
   const RemoveProfilePicture = (e) => {
@@ -244,22 +438,6 @@ const Profile = () => {
     } else {
       notify_error();
     }
-    // axios
-    //   .patch(
-    //     // `http://localhost:5555/api/user/update-user/${decoded_token._id}`
-    //     API_USER_URL + REQ_METHOD_UPDATE + decoded_token._id,
-    //     {
-    //       photo:
-    //         "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
-    //     }
-    //   )
-    //   .then((res) => {
-    //     setTrigger_Disable(true);
-    //     window.location.reload();
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
   };
 
   const DeleteAccount = () => {
@@ -286,7 +464,7 @@ const Profile = () => {
       <Header />
       <div className="p-3 max-w-lg mx-auto">
         <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
-        <form action="" className="flex flex-col gap-4">
+        <form onSubmit={UpdateProfile} className="flex flex-col gap-4">
           <input
             onChange={(e) => setFile(e.target.files[0])}
             type="file"
@@ -296,7 +474,7 @@ const Profile = () => {
           />
           <img
             className="rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2"
-            src={formData.photo}
+            src={user_data.photo}
             alt="profile"
             onClick={() => {
               trigger_button
@@ -317,8 +495,8 @@ const Profile = () => {
               </>
             ) : uploadPercentage === 100 && uploadError === false ? (
               <>
-                <span className="text-green-700">
-                  Image successfully uploaded!
+                <span className="text-green-700 font-bold">
+                  {messagePercentage}
                 </span>
               </>
             ) : (
@@ -329,6 +507,7 @@ const Profile = () => {
             // Make this responsive //
             <div className="flex justify-between items-center w-full">
               <button
+                disabled={triggerPercentage ? true : false}
                 onClick={(e) => {
                   e.preventDefault();
                   fileRef.current.click();
@@ -338,6 +517,7 @@ const Profile = () => {
                 Change Profile Picture
               </button>
               <button
+                disabled={triggerPercentage ? true : false}
                 onClick={RemoveProfilePicture}
                 className="font-bold text-sm bg-red-700 text-white h-[30px] w-[200px] rounded-md hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-500 ease-in-out"
               >
@@ -353,10 +533,10 @@ const Profile = () => {
             id=""
             className="border-[2px] p-3 rounded-lg focus:outline-none"
             placeholder="username"
-            value={formData.username}
-            onChange={(e) =>
-              setFormData({ ...formData, username: e.target.value })
-            }
+            value={from_input.username}
+            onChange={(e) => {
+              setForm_Input({ ...from_input, username: e.target.value });
+            }}
           />
           <input
             type="email"
@@ -364,10 +544,10 @@ const Profile = () => {
             id=""
             className="border-[2px] p-3 rounded-lg focus:outline-none"
             placeholder="email"
-            value={formData.email}
-            onChange={(e) =>
-              setFormData({ ...formData, email: e.target.value })
-            }
+            value={from_input.email}
+            onChange={(e) => {
+              setForm_Input({ ...from_input, email: e.target.value });
+            }}
           />
           <input
             type="password"
@@ -375,16 +555,24 @@ const Profile = () => {
             id=""
             className="border-[2px] p-3 rounded-lg focus:outline-none"
             placeholder="password"
-            onChange={(e) =>
-              setFormData({ ...formData, password: e.target.value })
-            }
+            value={from_input.password}
+            onChange={(e) => {
+              setForm_Input({ ...from_input, password: e.target.value });
+            }}
           />
           <button
-            disabled={trigger_disable ? true : false}
-            onClick={UpdateProfile}
+            type="submit"
             className="bg-slate-700 text-white font-bold rounded-lg p-3 uppercase hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed h-[45px] transition-all duration-500 ease-in-out "
           >
-            update
+            {loading_animation === true ? (
+              <>
+                <div className="flex justify-center items-center text-[20px]">
+                  <AiOutlineLoading3Quarters className="animate-spin" />
+                </div>
+              </>
+            ) : (
+              <span>update</span>
+            )}
           </button>
         </form>
         <div className="flex justify-between mt-5 font-bold">

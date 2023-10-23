@@ -170,61 +170,6 @@ export const SignIn_Google = async (req, res) => {
           login_method: "Google",
         });
     }
-
-    // if email exixst = sign token
-    // if (check_email_exist) {
-    //   // const { password: password, ...rest } = check_email_exist?._doc;
-    //   const Token = generate_token_google(
-    //     check_email_exist._id,
-    //     check_email_exist.username,
-    //     check_email_exist.email,
-    //     check_email_exist.password,
-    //     check_email_exist.photo
-    //   );
-    //   return res
-    //     .status(200)
-    //     .cookie("user_token", Token, {
-    //       expires: new Date(Date.now() + 60 * 60 * 24 * 1000 * 1),
-    //     })
-    //     .json({ system_message: "User Exist!", token: Token });
-    // } else {
-    //   const generatedPassword =
-    //     Math.random().toString(36).split(-8) +
-    //     Math.random().toString(36).split(-8);
-
-    //   const salt = await bcrypt.genSaltSync(10);
-    //   const passwordHash_googleUser = await bcrypt.hashSync(
-    //     generatedPassword,
-    //     salt
-    //   );
-
-    //   await User.create({
-    //     username:
-    //       username.split(" ").join("").toLowerCase() +
-    //       Math.random().toString(36).split(-4),
-    //     email: email,
-    //     password: passwordHash_googleUser,
-    //     photo: photo,
-    //   });
-    //   const Token = generate_token_google(
-    //     check_email_exist._id,
-    //     check_email_exist.username,
-    //     check_email_exist.email,
-    //     check_email_exist.password,
-    //     check_email_exist.photo
-    //   );
-
-    //   return res
-    //     .status(201)
-    //     .cookie("user_token", Token, {
-    //       expires: new Date(Date.now() + 60 * 60 * 24 * 1000 * 1),
-    //     })
-    //     .json({
-    //       system_message: "User Created!",
-    //       token: Token,
-    //       login_method: "Google",
-    //     });
-    // }
   } catch (error) {
     return res.status(500).json({ system_message: error.message });
   }

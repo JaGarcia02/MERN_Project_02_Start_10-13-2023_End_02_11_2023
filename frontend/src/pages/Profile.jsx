@@ -19,7 +19,7 @@ import {
 } from "../utils/user_url";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   delete_user,
@@ -254,165 +254,19 @@ const Profile = () => {
   const UpdateProfile = (e) => {
     e.preventDefault();
 
-    if (
-      from_input.username &&
-      !from_input.email &&
-      !from_input.password &&
-      !from_input.photo
-    ) {
-      const profile_data = {
-        _id: decoded_token._id,
-        username: from_input.username,
-      };
-
-      notify_success_update_profileDetails();
-      dispatch(update_profile_picture(profile_data));
-      setForm_Input({
-        ...from_input,
-        username: "",
-        email: "",
-        password: "",
-        photo: "",
-      });
-    } else if (
-      from_input.email &&
-      !from_input.username &&
-      !from_input.password &&
-      !from_input.photo
-    ) {
-      const profile_data = {
-        _id: decoded_token._id,
-        email: from_input.email,
-      };
-
-      notify_success_update_profileDetails();
-      dispatch(update_profile_picture(profile_data));
-      setForm_Input({
-        ...from_input,
-        username: "",
-        email: "",
-        password: "",
-        photo: "",
-      });
-    } else if (
-      from_input.password &&
-      !from_input.email &&
-      !from_input.username &&
-      !from_input.photo
-    ) {
-      const profile_data = {
-        _id: decoded_token._id,
-        password: from_input.password,
-      };
-
-      notify_success_update_profileDetails();
-      dispatch(update_profile_picture(profile_data));
-      setForm_Input({
-        ...from_input,
-        username: "",
-        email: "",
-        password: "",
-        photo: "",
-      });
-    } else if (
-      from_input.photo &&
-      !from_input.password &&
-      !from_input.email &&
-      !from_input.username
-    ) {
-      const profile_data = {
-        _id: decoded_token._id,
-        photo: user_data.photo,
-      };
-
-      notify_success_update_picture();
-      dispatch(update_profile_picture(profile_data));
-      setForm_Input({
-        ...from_input,
-        username: "",
-        email: "",
-        password: "",
-        photo: "",
-      });
-    } else if (
-      from_input.username &&
-      from_input.email &&
-      !from_input.password &&
-      !from_input.photo
-    ) {
-      const profile_data = {
-        _id: decoded_token._id,
-        username: from_input.username,
-        email: from_input.email,
-      };
-
-      notify_success_update_profileDetails();
-      dispatch(update_profile_picture(profile_data));
-      setForm_Input({
-        ...from_input,
-        username: "",
-        email: "",
-        password: "",
-        photo: "",
-      });
-    } else if (
-      from_input.username &&
-      from_input.email &&
-      from_input.password &&
-      !from_input.photo
-    ) {
-      const profile_data = {
-        _id: decoded_token._id,
-        username: from_input.username,
-        email: from_input.email,
-        password: from_input.password,
-      };
-
-      notify_success_update_profileDetails();
-      dispatch(update_profile_picture(profile_data));
-      setForm_Input({
-        ...from_input,
-        username: "",
-        email: "",
-        password: "",
-        photo: "",
-      });
-    } else if (
-      from_input.username &&
-      from_input.email &&
-      from_input.password &&
-      from_input.photo
-    ) {
-      const profile_data = {
-        _id: decoded_token._id,
-        username: from_input.username,
-        email: from_input.email,
-        password: from_input.password,
-        photo: user_data.photo,
-      };
-
-      notify_success_update_profileDetails();
-      dispatch(update_profile_picture(profile_data));
-      setForm_Input({
-        ...from_input,
-        username: "",
-        email: "",
-        password: "",
-        photo: "",
-      });
-    }
-
-    // if (from_input.username || from_input.email || from_input.password) {
-    //   notify_success_update_profileDetails();
-    //   dispatch(update_profile_picture(profile_data));
-    // } else {
+    // if (
+    //   from_input.username &&
+    //   !from_input.email &&
+    //   !from_input.password &&
+    //   !from_input.photo
+    // ) {
     //   const profile_data = {
     //     _id: decoded_token._id,
     //     username: from_input.username,
-    //     email: from_input.email,
-    //     password: from_input.password,
-    //     photo: user_data.photo,
     //   };
+
+    //   notify_success_update_profileDetails();
+    //   dispatch(update_profile_picture(profile_data));
     //   setForm_Input({
     //     ...from_input,
     //     username: "",
@@ -420,9 +274,149 @@ const Profile = () => {
     //     password: "",
     //     photo: "",
     //   });
+    // } else if (
+    //   from_input.email &&
+    //   !from_input.username &&
+    //   !from_input.password &&
+    //   !from_input.photo
+    // ) {
+    //   const profile_data = {
+    //     _id: decoded_token._id,
+    //     email: from_input.email,
+    //   };
+
+    //   notify_success_update_profileDetails();
+    //   dispatch(update_profile_picture(profile_data));
+    //   setForm_Input({
+    //     ...from_input,
+    //     username: "",
+    //     email: "",
+    //     password: "",
+    //     photo: "",
+    //   });
+    // } else if (
+    //   from_input.password &&
+    //   !from_input.email &&
+    //   !from_input.username &&
+    //   !from_input.photo
+    // ) {
+    //   const profile_data = {
+    //     _id: decoded_token._id,
+    //     password: from_input.password,
+    //   };
+
+    //   notify_success_update_profileDetails();
+    //   dispatch(update_profile_picture(profile_data));
+    //   setForm_Input({
+    //     ...from_input,
+    //     username: "",
+    //     email: "",
+    //     password: "",
+    //     photo: "",
+    //   });
+    // } else if (
+    //   from_input.photo &&
+    //   !from_input.password &&
+    //   !from_input.email &&
+    //   !from_input.username
+    // ) {
+    //   const profile_data = {
+    //     _id: decoded_token._id,
+    //     photo: user_data.photo,
+    //   };
+
     //   notify_success_update_picture();
     //   dispatch(update_profile_picture(profile_data));
+    //   setForm_Input({
+    //     ...from_input,
+    //     username: "",
+    //     email: "",
+    //     password: "",
+    //     photo: "",
+    //   });
+    // } else if (
+    //   from_input.username &&
+    //   from_input.email &&
+    //   !from_input.password &&
+    //   !from_input.photo
+    // ) {
+    //   const profile_data = {
+    //     _id: decoded_token._id,
+    //     username: from_input.username,
+    //     email: from_input.email,
+    //   };
+
+    //   notify_success_update_profileDetails();
+    //   dispatch(update_profile_picture(profile_data));
+    //   setForm_Input({
+    //     ...from_input,
+    //     username: "",
+    //     email: "",
+    //     password: "",
+    //     photo: "",
+    //   });
+    // } else if (
+    //   from_input.username &&
+    //   from_input.email &&
+    //   from_input.password &&
+    //   !from_input.photo
+    // ) {
+    //   const profile_data = {
+    //     _id: decoded_token._id,
+    //     username: from_input.username,
+    //     email: from_input.email,
+    //     password: from_input.password,
+    //   };
+
+    //   notify_success_update_profileDetails();
+    //   dispatch(update_profile_picture(profile_data));
+    //   setForm_Input({
+    //     ...from_input,
+    //     username: "",
+    //     email: "",
+    //     password: "",
+    //     photo: "",
+    //   });
+    // } else if (
+    //   from_input.username &&
+    //   from_input.email &&
+    //   from_input.password &&
+    //   from_input.photo
+    // ) {
+    //   const profile_data = {
+    //     _id: decoded_token._id,
+    //     username: from_input.username,
+    //     email: from_input.email,
+    //     password: from_input.password,
+    //     photo: user_data.photo,
+    //   };
+
+    //   notify_success_update_profileDetails();
+    //   dispatch(update_profile_picture(profile_data));
+    //   setForm_Input({
+    //     ...from_input,
+    //     username: "",
+    //     email: "",
+    //     password: "",
+    //     photo: "",
+    //   });
     // }
+    notify_success_update_profileDetails();
+    const profile_data = {
+      _id: decoded_token._id,
+      username: from_input.username,
+      email: from_input.email,
+      password: from_input.password,
+      photo: user_data.photo,
+    };
+    dispatch(update_profile_picture(profile_data));
+    setForm_Input({
+      ...from_input,
+      username: "",
+      email: "",
+      password: "",
+      photo: "",
+    });
   };
 
   const RemoveProfilePicture = (e) => {
@@ -591,6 +585,25 @@ const Profile = () => {
               <span>update</span>
             )}
           </button>
+          {toggle_disable === true ? (
+            <>
+              <button
+                disabled={toggle_disable ? true : false}
+                className="bg-green-700 text-white p-3 rounded-lg text-center disabled:opacity-50 uppercase font-bold"
+              >
+                Create Listing
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                to={"/listing"}
+                className={`bg-green-700 text-white p-3 rounded-lg text-center hover:opacity-75 font-bold uppercase transition-all duration-500 ease-in-out `}
+              >
+                Create Listing
+              </Link>
+            </>
+          )}
         </form>
         <div className="flex justify-between mt-5 font-bold">
           <button

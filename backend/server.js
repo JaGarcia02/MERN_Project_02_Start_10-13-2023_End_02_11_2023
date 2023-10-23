@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import UserRoutetr from "./routes/user_route.js";
 import AuthRouter from "./routes/auth_route.js";
+import ListingRouter from "./routes/listing_route.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import fs from "fs";
@@ -18,6 +19,7 @@ app.use(cookieParser());
 
 app.use("/api/user", UserRoutetr);
 app.use("/api/auth", AuthRouter);
+app.use("/api/listing", ListingRouter);
 
 // Local Storage
 try {

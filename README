@@ -7,30 +7,32 @@ Development Traker:
 
 October 22/23 = {
 
-    - Profile Picture functions with redux added in Profile Page and in Headers,
+     - Profile Picture functions with redux added in Profile Page and in Headers,
     where if the user uploaded or remove the profile picture, there is no necessary
     to refresh the page to load the current changes in the user profile
 
-    - Added hashed password in the backend of user_controllers and added some conditions
+     - Added hashed password in the backend of user_controllers and added some conditions
     where user will update one specific details of its account.
 
 }
 
-Curret Checkpoint = {
-
-October 22/23 = Need to finish the Signout/Logout function
-
+October 23/23 () = {
 }
 
-Try to add ={
+Curret Checkpoint:
 
-- Make image upload save in local storage - in current project, images are saved in the firebase
+October 22/23 = Need to finish the Signout/Logout function (Done)
+October 23/23 =
 
-- Make Pages responsive
+Try to add = {
 
-- When user continues to google, disable the input fields when function is fullfiled.
+- Make image upload save in local storage - in current project, images are saved in the firebase (added on October 22/23)
 
-- In profile page Add icons and clickable edit button to show input fields where the initial state will show the user info in text form.
+- Make Pages responsive (added on October 22/23)
+
+- When user continues to google, disable the input fields when function is fullfiled. (added on October 23/23)
+
+- In profile page Add icons and clickable edit button to show input fields where the initial state will show the user info in text form. (added on October 23/23)
 
 }
 

@@ -100,6 +100,23 @@ export const check_token = createAsyncThunk(
   }
 );
 
+export const logout_user = createAsyncThunk(
+  "auth/signout",
+  async (thunkAPI) => {
+    try {
+      return await authService.LogOut();
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.system_message) ||
+        error.response.status ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 export const authSlice = createSlice({
   name: "user_credentials",
   initialState,
@@ -181,21 +198,16 @@ export const authSlice = createSlice({
         state.isLoadingAuth_Signup = true;
       })
 
-      //   // Logout -states-
-      //   .addCase(logout_user.fulfilled, (state, action) => {
-      //     state.user = null;
-      //     state.isSuccessUser = true;
-      //   })
-      //   .addCase(logout_user.pending, (state, action) => {
-      //     state.isLoadingUser = true;
-      //   })
-      //   // Register -states-
-
-      //   .addCase(register_user.fulfilled, (state, action) => {
-      //     state.isLoadingUser = false;
-      //     state.isSuccessUser = true;
-      //     state.user = action.payload;
-      //   })
+      // Logout -states-
+      .addCase(logout_user.pending, (state, action) => {
+        state.isLoadingAuth = true;
+      })
+      .addCase(logout_user.fulfilled, (state, action) => {
+        state.isLoadingAuth = false;
+        state.isSuccessAuth = true;
+        state.responseMessage = action.payload;
+        state.response = null;
+      })
 
       // Check Token -state-
       .addCase(check_token.rejected, (state, action) => {

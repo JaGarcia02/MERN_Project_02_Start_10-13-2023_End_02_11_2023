@@ -74,32 +74,41 @@ const Header = () => {
   // Checking token & for Authentication System
   useEffect(() => {
     const interval = setInterval(() => {
-      const LocalStorage_Token = {
-        token: localStorage.getItem("user_token"),
-      };
-
       if (!Cookie.get("user_token")) {
         alert("No Token Found! Plase Signin again.\nSystem Admin");
         Cookie.remove("user_token");
         localStorage.removeItem("user_token");
         navigate("/");
         location.reload();
-      } else if (
-        JSON.stringify(Cookie.get("user_token")) !== LocalStorage_Token.token
-      ) {
-        alert(
-          "Invalid Token / Token not recognize! Plase Signin again.\nSystem Admin"
-        );
-        Cookie.remove("user_token");
-        localStorage.removeItem("user_token");
-        navigate("/");
-        location.reload();
+      } else {
+        const LocalStorage_Token = {
+          token: localStorage.getItem("user_token"),
+        };
+        if (
+          JSON.stringify(Cookie.get("user_token")) !== LocalStorage_Token.token
+        ) {
+          alert(
+            "Invalid Token / Token not recognize! Plase Signin again.\nSystem Admin"
+          );
+
+          Cookie.remove("user_token");
+          localStorage.removeItem("user_token");
+          navigate("/");
+          location.reload();
+        }
       }
 
       dispatch(check_token(token));
     }, 2000);
+
     return () => clearInterval(interval);
   }, []);
+
+  // Check if token is valid
+  // useEffect(() => {
+  //   const interval = setInterval(() => {}, 2000);
+  //   return () => clearInterval(interval);
+  // }, []);
 
   // Fetching Data from database
   useEffect(() => {

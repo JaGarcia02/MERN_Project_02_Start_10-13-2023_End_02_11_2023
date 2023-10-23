@@ -231,6 +231,21 @@ export const SignIn_Google = async (req, res) => {
 };
 // ************************************************************** Google Signin ************************************************************** //
 
+// ***************************************************************** Signout ***************************************************************** //
+
+export const SignOut = async (req, res) => {
+  try {
+    res.cookie("user_token", null, { expires: new Date(0) });
+    return res
+      .status(200)
+      .json({ system_message: "User Signed-out Successfully!" });
+  } catch (error) {
+    return res.status(500).json({ system_message: error.message });
+  }
+};
+
+// ***************************************************************** Signout ***************************************************************** //
+
 export const GetToken = async (req, res) => {
   const { token } = req.body;
 

@@ -28,6 +28,10 @@ Try to add ={
 
 - Make Pages responsive
 
+- When user continues to google, disable the input fields when function is fullfiled.
+
+- In profile page Add icons and clickable edit button to show input fields where the initial state will show the user info in text form.
+
 }
 
 Improvements = {

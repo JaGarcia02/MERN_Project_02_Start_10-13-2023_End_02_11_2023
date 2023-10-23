@@ -26,6 +26,7 @@ import {
   reset_user,
   update_profile_picture,
 } from "../redux/features/user/user_slice";
+import { logout_user, reset } from "../redux/features/auth/auth_slice";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -38,6 +39,7 @@ const Profile = () => {
   const [uploadError, setUploadError] = useState(false);
   const [loading_animation, setLoading_Animation] = useState(false);
   const [triggerPercentage, setTriggerPercentage] = useState(false);
+  const [logout_disable, setLogout_Disable] = useState(false);
   const [messagePercentage, setMessagePercentage] = useState("");
   const [from_input, setForm_Input] = useState({
     username: "",
@@ -459,6 +461,15 @@ const Profile = () => {
     }
   };
 
+  const LogOutAccount = () => {
+    setLogout_Disable(true);
+    setTimeout(() => {
+      dispatch(logout_user());
+      navigate("/");
+      window.location.reload();
+    }, 2000);
+  };
+
   return (
     <>
       <Header />
@@ -533,6 +544,7 @@ const Profile = () => {
             id=""
             className="border-[2px] p-3 rounded-lg focus:outline-none"
             placeholder="username"
+            disabled={logout_disable ? true : false}
             value={from_input.username}
             onChange={(e) => {
               setForm_Input({ ...from_input, username: e.target.value });
@@ -544,6 +556,7 @@ const Profile = () => {
             id=""
             className="border-[2px] p-3 rounded-lg focus:outline-none"
             placeholder="email"
+            disabled={logout_disable ? true : false}
             value={from_input.email}
             onChange={(e) => {
               setForm_Input({ ...from_input, email: e.target.value });
@@ -555,6 +568,7 @@ const Profile = () => {
             id=""
             className="border-[2px] p-3 rounded-lg focus:outline-none"
             placeholder="password"
+            disabled={logout_disable ? true : false}
             value={from_input.password}
             onChange={(e) => {
               setForm_Input({ ...from_input, password: e.target.value });
@@ -562,6 +576,7 @@ const Profile = () => {
           />
           <button
             type="submit"
+            disabled={logout_disable ? true : false}
             className="bg-slate-700 text-white font-bold rounded-lg p-3 uppercase hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed h-[45px] transition-all duration-500 ease-in-out "
           >
             {loading_animation === true ? (
@@ -581,9 +596,11 @@ const Profile = () => {
               Delete Account
             </span>
           </button>
-          <span className="text-red-700 cursor-pointer hover:text-red-500 hover:underline transition-all duration-500 ease-in-out">
-            Sign Out
-          </span>
+          <button onClick={LogOutAccount}>
+            <span className="text-red-700 cursor-pointer hover:text-red-500 hover:underline transition-all duration-500 ease-in-out">
+              Sign Out
+            </span>
+          </button>
         </div>
         <ToastContainer />
       </div>

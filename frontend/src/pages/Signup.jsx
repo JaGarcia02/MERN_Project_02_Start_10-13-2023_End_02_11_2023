@@ -11,6 +11,7 @@ import { reset, signup_user } from "../redux/features/auth/auth_slice";
 const Signup = () => {
   const [input, setInput] = useState({ username: "", email: "", password: "" });
   const [isLoading_Signup, setIsLoading_Signup] = useState(false);
+  const [toggle_disable, setToggle_Disable] = useState(false);
   const [loading_animation, setLoading_Animation] = useState(false);
   const {
     Auth_User,
@@ -95,40 +96,6 @@ const Signup = () => {
     };
 
     dispatch(signup_user(input_data_signup));
-    // axios
-    //   .post("http://localhost:5555/api/auth/signup", {
-    //     username: input.username,
-    //     email: input.email,
-    //     password: input.password,
-    //   })
-    //   .then((res) => {
-    //     setInput({ ...input, username: "", email: "", password: "" });
-    //     notify_success();
-    //     setTimeout(() => {
-    //       setIsLoading(false);
-    //       navigate("/");
-    //     }, 4000);
-    //   })
-    //   .catch((error) => {
-    //     if (
-    //       error.response.status === 403 &&
-    //       error.response.data.system_message ===
-    //         "email and username is already taken!"
-    //     ) {
-    //       notify_error_403_username_email();
-    //     } else if (
-    //       error.response.status === 403 &&
-    //       error.response.data.system_message === "email already taken!"
-    //     ) {
-    //       notify_error_403_email();
-    //     } else if (
-    //       error.response.status === 403 &&
-    //       error.response.data.system_message === "username is already taken!"
-    //     ) {
-    //       notify_error_403_username();
-    //     }
-    //     setIsLoading(false);
-    //   });
   };
 
   useEffect(() => {
@@ -144,6 +111,7 @@ const Signup = () => {
 
     if (isSuccessAuth_Google) {
       if (response_Google?.status == 201) {
+        setToggle_Disable(true);
         notify_success_google();
         setLoading_Animation(true);
         setTimeout(() => {
@@ -152,7 +120,7 @@ const Signup = () => {
       }
 
       if (response_Google?.status == 200) {
-        // notify_success_google_signingin();
+        setToggle_Disable(true);
         setLoading_Animation(true);
         setTimeout(() => {
           setLoading_Animation(false);
@@ -162,6 +130,7 @@ const Signup = () => {
 
     if (isSuccessAuth_Signup) {
       notify_success();
+      setToggle_Disable(true);
       setTimeout(() => {
         setIsLoading_Signup(isLoadingAuth_Signup);
         navigate("/");
@@ -208,7 +177,11 @@ const Signup = () => {
               id="username"
               onChange={(e) => setInput({ ...input, username: e.target.value })}
               value={input.username}
-              disabled={isLoading_Signup || loading_animation ? true : false}
+              disabled={
+                isLoading_Signup || loading_animation || toggle_disable
+                  ? true
+                  : false
+              }
               required
             />
             <input
@@ -218,7 +191,11 @@ const Signup = () => {
               id="email"
               onChange={(e) => setInput({ ...input, email: e.target.value })}
               value={input.email}
-              disabled={isLoading_Signup || loading_animation ? true : false}
+              disabled={
+                isLoading_Signup || loading_animation || toggle_disable
+                  ? true
+                  : false
+              }
               required
             />
             <input
@@ -228,7 +205,11 @@ const Signup = () => {
               id="passowrd"
               onChange={(e) => setInput({ ...input, password: e.target.value })}
               value={input.password}
-              disabled={isLoading_Signup || loading_animation ? true : false}
+              disabled={
+                isLoading_Signup || loading_animation || toggle_disable
+                  ? true
+                  : false
+              }
               required
             />
             <button
@@ -250,12 +231,26 @@ const Signup = () => {
             <OAuth />
           </form>
           <div className="flex gap-2 mt-5">
-            <p>Have an account?</p>
-            <Link to={"/"}>
-              <span className="text-blue-700 font-semibold hover:text-blue-500">
-                Sign in
-              </span>
-            </Link>
+            {toggle_disable === true ? (
+              <>
+                <p>Have an account?</p>
+                <button
+                  disabled={toggle_disable ? true : false}
+                  className="text-blue-700 font-semibold hover:text-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Sign in
+                </button>
+              </>
+            ) : (
+              <>
+                <p>Have an account?</p>
+                <Link to={"/"}>
+                  <span className="text-blue-700 font-semibold hover:text-blue-500 disabled:cursor-not-allowed disabled:opacity-70">
+                    Sign in
+                  </span>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>

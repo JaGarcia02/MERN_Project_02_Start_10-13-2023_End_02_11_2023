@@ -11,6 +11,7 @@ const Signin = () => {
   const [input, setInput] = useState({ email: "", password: "" });
   const [isLoading_Signin, setIsLoading_Signin] = useState(false);
   const [loading_animation, setLoading_Animation] = useState(false);
+  const [toggle_disable, setToggle_Disable] = useState(false);
   const {
     Auth_User,
     response_Login,
@@ -94,6 +95,7 @@ const Signin = () => {
         // notify_success_google();
         setIsLoading_Signin(true);
         setLoading_Animation(true);
+        setToggle_Disable(true);
         setTimeout(() => {
           setIsLoading_Signin(false);
           setLoading_Animation(false);
@@ -104,6 +106,7 @@ const Signin = () => {
         // notify_success();
         setIsLoading_Signin(true);
         setLoading_Animation(true);
+        setToggle_Disable(true);
         setTimeout(() => {
           setIsLoading_Signin(false);
           setLoading_Animation(false);
@@ -161,7 +164,11 @@ const Signin = () => {
               id="email"
               onChange={(e) => setInput({ ...input, email: e.target.value })}
               value={input.email}
-              disabled={isLoading_Signin || isLoadingAuth_Login ? true : false}
+              disabled={
+                isLoading_Signin || isLoadingAuth_Login || toggle_disable
+                  ? true
+                  : false
+              }
               required
             />
             <input
@@ -171,7 +178,11 @@ const Signin = () => {
               id="passowrd"
               onChange={(e) => setInput({ ...input, password: e.target.value })}
               value={input.password}
-              disabled={isLoading_Signin || isLoadingAuth_Login ? true : false}
+              disabled={
+                isLoading_Signin || isLoadingAuth_Login || toggle_disable
+                  ? true
+                  : false
+              }
               required
             />
             <button
@@ -196,12 +207,27 @@ const Signin = () => {
           </form>
 
           <div className="flex gap-2 mt-5">
-            <p>Don't have an account?</p>
-            <Link to={"/sign-up"}>
-              <span className="text-blue-700 font-semibold hover:text-blue-500">
-                Sign up
-              </span>
-            </Link>
+            {toggle_disable === true ? (
+              <>
+                <p>Don't have an account?</p>
+                <button
+                  disabled={toggle_disable ? true : false}
+                  className="text-blue-700 font-semibold hover:text-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Sign up
+                </button>
+              </>
+            ) : (
+              <>
+                <p>Don't have an account?</p>
+
+                <Link to={"/sign-up"}>
+                  <span className="text-blue-700 font-semibold hover:text-blue-500">
+                    Sign up
+                  </span>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>

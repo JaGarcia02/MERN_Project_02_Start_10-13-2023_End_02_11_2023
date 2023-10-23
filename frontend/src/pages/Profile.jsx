@@ -35,6 +35,7 @@ const Profile = () => {
   const decoded_token = jwt_decode(Cookie.get("user_token"));
   const [file, setFile] = useState(undefined);
   const [trigger_button, setTrigger_Button] = useState(false);
+  const [toggle_disable, setToggle_Disable] = useState(false);
   const [uploadPercentage, setUploadPercentage] = useState(0);
   const [uploadError, setUploadError] = useState(false);
   const [loading_animation, setLoading_Animation] = useState(false);
@@ -463,6 +464,7 @@ const Profile = () => {
 
   const LogOutAccount = () => {
     setLogout_Disable(true);
+    setToggle_Disable(true);
     setTimeout(() => {
       dispatch(logout_user());
       navigate("/");
@@ -591,15 +593,19 @@ const Profile = () => {
           </button>
         </form>
         <div className="flex justify-between mt-5 font-bold">
-          <button onClick={DeleteAccount}>
-            <span className="text-red-700 cursor-pointer hover:text-red-500 hover:underline transition-all duration-500 ease-in-out">
-              Delete Account
-            </span>
+          <button
+            className="text-red-700 cursor-pointer hover:text-red-500 hover:underline disabled:no-underline transition-all duration-500 ease-in-out disabled:cursor-not-allowed disabled:opacity-50"
+            disabled={toggle_disable}
+            onClick={DeleteAccount}
+          >
+            <span className="disabled:cursor-not-allowed">Delete Account</span>
           </button>
-          <button onClick={LogOutAccount}>
-            <span className="text-red-700 cursor-pointer hover:text-red-500 hover:underline transition-all duration-500 ease-in-out">
-              Sign Out
-            </span>
+          <button
+            className="text-red-700 cursor-pointer hover:text-red-500 hover:underline disabled:no-underline transition-all duration-500 ease-in-out disabled:cursor-not-allowed disabled:opacity-50"
+            disabled={toggle_disable}
+            onClick={LogOutAccount}
+          >
+            <span className="disabled:cursor-not-allowed">Sign Out</span>
           </button>
         </div>
         <ToastContainer />

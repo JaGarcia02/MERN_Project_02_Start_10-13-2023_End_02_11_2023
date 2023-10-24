@@ -27,7 +27,8 @@ const CreateListing = () => {
               name=""
               id="description"
               placeholder="Description"
-              className="border p-3 rounded-lg focus:outline-none"
+              className="border p-3 rounded-lg focus:outline-none resize-none h-[8rem]"
+              maxLength={1000}
               required
             />
             <input
@@ -87,6 +88,7 @@ const CreateListing = () => {
                   name="bedroom"
                   min={1}
                   max={10}
+                  defaultValue={1}
                   required
                   className="p-3 border border-gray-300 rounded-lg"
                 />
@@ -99,6 +101,7 @@ const CreateListing = () => {
                   name="bathroom"
                   min={1}
                   max={10}
+                  defaultValue={1}
                   required
                   className="p-3 border border-gray-300 rounded-lg"
                 />
@@ -111,6 +114,7 @@ const CreateListing = () => {
                   name="regularprice"
                   min={1}
                   max={10}
+                  defaultValue={0}
                   required
                   className="p-3 border border-gray-300 rounded-lg"
                 />
@@ -126,6 +130,7 @@ const CreateListing = () => {
                   name="discountedprice"
                   min={1}
                   max={10}
+                  defaultValue={0}
                   required
                   className="p-3 border border-gray-300 rounded-lg"
                 />

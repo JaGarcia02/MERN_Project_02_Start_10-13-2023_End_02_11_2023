@@ -9,7 +9,14 @@ const initialState = {
   isErrorUser_Delete: false,
   responseMessage_Delete: "",
 
-  // Update Profile Picture
+  // Update Profile Details
+  response_UpdateProfileDetails: "",
+  isLoadingUser_UpdateProfileDetails: false,
+  isSuccessUser_UpdateProfileDetails: false,
+  isErrorUser_UpdateProfileDetails: false,
+  responseMessage_UpdateProfileDetails: "",
+
+  // Update Picture
   response_UpdateProfilePicture: "",
   isLoadingUser_UpdateProfilePicture: false,
   isSuccessUser_UpdateProfilePicture: false,
@@ -34,11 +41,28 @@ export const delete_user = createAsyncThunk(
   }
 );
 
-export const update_profile_picture = createAsyncThunk(
-  "user/remove-profile-picture",
+export const update_profile = createAsyncThunk(
+  "user/update-details",
   async (profile_data, thunkAPI) => {
     try {
-      return await userService.UpdateProfilePicture(profile_data);
+      return await userService.UpdateProfile(profile_data);
+    } catch (error) {
+      const message =
+        (error.response_Delete &&
+          error.response_Delete.data &&
+          error.response_Delete.data.system_message) ||
+        error.response_Delete.status ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+export const update_profile_picture = createAsyncThunk(
+  "user/update-picture",
+  async (picture_data, thunkAPI) => {
+    try {
+      return await userService.UpdateProfilePicture(picture_data);
     } catch (error) {
       const message =
         (error.response_Delete &&
@@ -61,6 +85,12 @@ export const userSlice = createSlice({
       state.isSuccessUser_Delete = false;
       state.isErrorUser_Delete = false;
       state.responseMessage_Delete = "";
+
+      // Update Profile Details
+      state.isLoadingUser_UpdateProfileDetails = false;
+      state.isSuccessUser_UpdateProfileDetails = false;
+      state.isErrorUser_UpdateProfileDetails = false;
+      state.responseMessage_UpdateProfileDetails = "";
 
       // Update Profile Picture
       state.isLoadingUser_UpdateProfilePicture = false;
@@ -86,6 +116,22 @@ export const userSlice = createSlice({
         state.isErrorUser_Delete = true;
         state.responseMessage_Delete = action.payload;
         state.response_Delete = null;
+      })
+
+      // Update Profile
+      .addCase(update_profile.pending, (state, action) => {
+        state.isLoadingUser_UpdateProfileDetails = true;
+      })
+      .addCase(update_profile.fulfilled, (state, action) => {
+        state.isLoadingUser_UpdateProfileDetails = false;
+        state.isSuccessUser_UpdateProfileDetails = true;
+        state.response_UpdateProfileDetails = action.payload;
+      })
+      .addCase(update_profile.rejected, (state, action) => {
+        state.isLoadingUser_UpdateProfileDetails = false;
+        state.isErrorUser_UpdateProfileDetails = true;
+        state.responseMessage_UpdateProfileDetails = action.payload;
+        state.response_UpdateProfileDetails = null;
       })
 
       // Update Profile Picture

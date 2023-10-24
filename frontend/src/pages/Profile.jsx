@@ -11,12 +11,7 @@ import {
 import { app } from "../firebase/google_firebase";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import axios from "axios";
-import {
-  API_USER_URL,
-  REQ_METHOD_GET,
-  REQ_METHOD_UPDATE,
-  REQ_METHOD_DELETE,
-} from "../utils/user_url";
+import { API_USER_URL, REQ_METHOD_GET_USER } from "../utils/user_url";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Link, useNavigate } from "react-router-dom";
@@ -24,6 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   delete_user,
   reset_user,
+  update_profile,
   update_profile_picture,
 } from "../redux/features/user/user_slice";
 import { logout_user, reset } from "../redux/features/auth/auth_slice";
@@ -36,13 +32,14 @@ const Profile = () => {
   const [file, setFile] = useState(undefined);
   const [trigger_button, setTrigger_Button] = useState(false);
   const [toggle_disable, setToggle_Disable] = useState(false);
+  const [disable_update, setDisable_Update] = useState(true);
   const [uploadPercentage, setUploadPercentage] = useState(0);
   const [uploadError, setUploadError] = useState(false);
   const [loading_animation, setLoading_Animation] = useState(false);
   const [triggerPercentage, setTriggerPercentage] = useState(false);
   const [logout_disable, setLogout_Disable] = useState(false);
   const [messagePercentage, setMessagePercentage] = useState("");
-  const [from_input, setForm_Input] = useState({
+  const [form_input, setForm_Input] = useState({
     username: "",
     email: "",
     password: "",
@@ -61,6 +58,11 @@ const Profile = () => {
     isErrorUserUser_Delete,
     responseMessage_Delete,
     response_Delete,
+    isLoadingUser_UpdateProfileDetails,
+    isSuccessUser_UpdateProfileDetails,
+    isErrorUser_UpdateProfileDetails,
+    responseMessage_UpdateProfileDetails,
+    response_UpdateProfileDetails,
     isLoadingUser_UpdateProfilePicture,
     isSuccessUser_UpdateProfilePicture,
     isErrorUser_UpdateProfilePicture,
@@ -145,20 +147,29 @@ const Profile = () => {
   // ******************************************************************************************** useEffects ******************************************************************************************** //
 
   useEffect(() => {
-    axios.get(API_USER_URL + REQ_METHOD_GET + decoded_token._id).then((res) => {
-      setUser_Data({
-        ...user_data,
-        username: res.data.username,
-        email: res.data.email,
-        password: res.data.password,
-        photo: res.data.photo,
+    if (form_input.username || form_input.email || form_input.password) {
+      setDisable_Update(false);
+    } else {
+      setDisable_Update(true);
+    }
+
+    axios
+      .get(API_USER_URL + REQ_METHOD_GET_USER + decoded_token._id)
+      .then((res) => {
+        setUser_Data({
+          ...user_data,
+          username: res.data.username,
+          email: res.data.email,
+          password: res.data.password,
+          photo: res.data.photo,
+        });
       });
-    });
     if (file) {
       handleFileUpload(file);
     }
+
     setFile(undefined);
-  }, [file]);
+  }, [file, form_input]);
 
   useState(() => {
     if (isLoadingUser_Delete) {
@@ -176,25 +187,41 @@ const Profile = () => {
   ]);
 
   useEffect(() => {
-    if (isSuccessUser_UpdateProfilePicture) {
+    if (isLoadingUser_UpdateProfileDetails) {
       setLoading_Animation(true);
+    }
+
+    if (isLoadingUser_UpdateProfilePicture) {
+      setLoading_Animation(true);
+    }
+
+    if (isSuccessUser_UpdateProfileDetails) {
+      setUser_Data({
+        ...user_data,
+        username: response_UpdateProfileDetails.data.username,
+        email: response_UpdateProfileDetails.data.email,
+        password: response_UpdateProfileDetails.data.password,
+      });
     }
 
     if (isSuccessUser_UpdateProfilePicture) {
       setUser_Data({
         ...user_data,
-        username: response_UpdateProfilePicture.data.username,
-        email: response_UpdateProfilePicture.data.email,
-        password: response_UpdateProfilePicture.data.password,
-        photo: response_UpdateProfilePicture.data.photo,
+        photo: response_UpdateProfilePicture?.data?.photo,
       });
     }
+
     setTimeout(() => {
       setLoading_Animation(false);
     }, 3000);
 
     dispatch(reset_user());
   }, [
+    isLoadingUser_UpdateProfileDetails,
+    isSuccessUser_UpdateProfileDetails,
+    isErrorUser_UpdateProfileDetails,
+    responseMessage_UpdateProfileDetails,
+    response_UpdateProfileDetails,
     isLoadingUser_UpdateProfilePicture,
     isSuccessUser_UpdateProfilePicture,
     isErrorUser_UpdateProfilePicture,
@@ -244,8 +271,13 @@ const Profile = () => {
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downlodURL) => {
-          setForm_Input({ ...from_input, photo: downlodURL });
+          setForm_Input({ ...form_input, photo: downlodURL });
           setUser_Data({ ...user_data, photo: downlodURL });
+          const picture_data = {
+            _id: decoded_token._id,
+            photo: downlodURL,
+          };
+          dispatch(update_profile_picture(picture_data));
         });
       }
     );
@@ -254,164 +286,16 @@ const Profile = () => {
   const UpdateProfile = (e) => {
     e.preventDefault();
 
-    // if (
-    //   from_input.username &&
-    //   !from_input.email &&
-    //   !from_input.password &&
-    //   !from_input.photo
-    // ) {
-    //   const profile_data = {
-    //     _id: decoded_token._id,
-    //     username: from_input.username,
-    //   };
-
-    //   notify_success_update_profileDetails();
-    //   dispatch(update_profile_picture(profile_data));
-    //   setForm_Input({
-    //     ...from_input,
-    //     username: "",
-    //     email: "",
-    //     password: "",
-    //     photo: "",
-    //   });
-    // } else if (
-    //   from_input.email &&
-    //   !from_input.username &&
-    //   !from_input.password &&
-    //   !from_input.photo
-    // ) {
-    //   const profile_data = {
-    //     _id: decoded_token._id,
-    //     email: from_input.email,
-    //   };
-
-    //   notify_success_update_profileDetails();
-    //   dispatch(update_profile_picture(profile_data));
-    //   setForm_Input({
-    //     ...from_input,
-    //     username: "",
-    //     email: "",
-    //     password: "",
-    //     photo: "",
-    //   });
-    // } else if (
-    //   from_input.password &&
-    //   !from_input.email &&
-    //   !from_input.username &&
-    //   !from_input.photo
-    // ) {
-    //   const profile_data = {
-    //     _id: decoded_token._id,
-    //     password: from_input.password,
-    //   };
-
-    //   notify_success_update_profileDetails();
-    //   dispatch(update_profile_picture(profile_data));
-    //   setForm_Input({
-    //     ...from_input,
-    //     username: "",
-    //     email: "",
-    //     password: "",
-    //     photo: "",
-    //   });
-    // } else if (
-    //   from_input.photo &&
-    //   !from_input.password &&
-    //   !from_input.email &&
-    //   !from_input.username
-    // ) {
-    //   const profile_data = {
-    //     _id: decoded_token._id,
-    //     photo: user_data.photo,
-    //   };
-
-    //   notify_success_update_picture();
-    //   dispatch(update_profile_picture(profile_data));
-    //   setForm_Input({
-    //     ...from_input,
-    //     username: "",
-    //     email: "",
-    //     password: "",
-    //     photo: "",
-    //   });
-    // } else if (
-    //   from_input.username &&
-    //   from_input.email &&
-    //   !from_input.password &&
-    //   !from_input.photo
-    // ) {
-    //   const profile_data = {
-    //     _id: decoded_token._id,
-    //     username: from_input.username,
-    //     email: from_input.email,
-    //   };
-
-    //   notify_success_update_profileDetails();
-    //   dispatch(update_profile_picture(profile_data));
-    //   setForm_Input({
-    //     ...from_input,
-    //     username: "",
-    //     email: "",
-    //     password: "",
-    //     photo: "",
-    //   });
-    // } else if (
-    //   from_input.username &&
-    //   from_input.email &&
-    //   from_input.password &&
-    //   !from_input.photo
-    // ) {
-    //   const profile_data = {
-    //     _id: decoded_token._id,
-    //     username: from_input.username,
-    //     email: from_input.email,
-    //     password: from_input.password,
-    //   };
-
-    //   notify_success_update_profileDetails();
-    //   dispatch(update_profile_picture(profile_data));
-    //   setForm_Input({
-    //     ...from_input,
-    //     username: "",
-    //     email: "",
-    //     password: "",
-    //     photo: "",
-    //   });
-    // } else if (
-    //   from_input.username &&
-    //   from_input.email &&
-    //   from_input.password &&
-    //   from_input.photo
-    // ) {
-    //   const profile_data = {
-    //     _id: decoded_token._id,
-    //     username: from_input.username,
-    //     email: from_input.email,
-    //     password: from_input.password,
-    //     photo: user_data.photo,
-    //   };
-
-    //   notify_success_update_profileDetails();
-    //   dispatch(update_profile_picture(profile_data));
-    //   setForm_Input({
-    //     ...from_input,
-    //     username: "",
-    //     email: "",
-    //     password: "",
-    //     photo: "",
-    //   });
-    // }
     notify_success_update_profileDetails();
     const profile_data = {
       _id: decoded_token._id,
-      username: from_input.username,
-      email: from_input.email,
-      password: from_input.password,
-      photo: user_data.photo,
+      username: form_input.username,
+      email: form_input.email,
+      password: form_input.password,
     };
-    dispatch(update_profile_picture(profile_data));
+    dispatch(update_profile(profile_data));
     setForm_Input({
-      ...from_input,
+      ...form_input,
       username: "",
       email: "",
       password: "",
@@ -431,7 +315,7 @@ const Profile = () => {
       confirm("Please confirm for deleting this account.\nJaCorpEstate") == true
     ) {
       notify_success_remove_picture();
-      dispatch(update_profile_picture(profile_data));
+      dispatch(update_profile(profile_data));
     } else {
       notify_error();
     }
@@ -442,15 +326,13 @@ const Profile = () => {
     if (
       confirm("Please confirm for deleting this account.\nJaCorpEstate") == true
     ) {
-      if (response_Delete.status == 200) {
-        notify_success();
-        setTimeout(() => {
-          dispatch(delete_user(id));
-          setLoading_Animation(isLoadingUser_Delete);
-          navigate("/");
-          window.location.reload();
-        }, 2000);
-      }
+      notify_success();
+      setTimeout(() => {
+        dispatch(delete_user(id));
+        setLoading_Animation(isLoadingUser_Delete);
+        navigate("/");
+        window.location.reload();
+      }, 2000);
     } else {
       notify_error();
     }
@@ -538,12 +420,13 @@ const Profile = () => {
             type="text"
             name=""
             id=""
+            minlength={6}
             className="border-[2px] p-3 rounded-lg focus:outline-none"
             placeholder="username"
             disabled={logout_disable ? true : false}
-            value={from_input.username}
+            value={form_input.username}
             onChange={(e) => {
-              setForm_Input({ ...from_input, username: e.target.value });
+              setForm_Input({ ...form_input, username: e.target.value });
             }}
           />
           <input
@@ -553,26 +436,27 @@ const Profile = () => {
             className="border-[2px] p-3 rounded-lg focus:outline-none"
             placeholder="email"
             disabled={logout_disable ? true : false}
-            value={from_input.email}
+            value={form_input.email}
             onChange={(e) => {
-              setForm_Input({ ...from_input, email: e.target.value });
+              setForm_Input({ ...form_input, email: e.target.value });
             }}
           />
           <input
             type="password"
             name=""
             id=""
+            minlength={12}
             className="border-[2px] p-3 rounded-lg focus:outline-none"
             placeholder="password"
             disabled={logout_disable ? true : false}
-            value={from_input.password}
+            value={form_input.password}
             onChange={(e) => {
-              setForm_Input({ ...from_input, password: e.target.value });
+              setForm_Input({ ...form_input, password: e.target.value });
             }}
           />
           <button
             type="submit"
-            disabled={logout_disable ? true : false}
+            disabled={logout_disable || disable_update ? true : false}
             className="bg-slate-700 text-white font-bold rounded-lg p-3 uppercase hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed h-[45px] transition-all duration-500 ease-in-out "
           >
             {loading_animation === true ? (

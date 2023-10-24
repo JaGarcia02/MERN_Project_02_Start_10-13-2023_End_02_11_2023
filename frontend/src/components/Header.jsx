@@ -7,6 +7,7 @@ import Cookie from "js-cookie";
 import jwt_decode from "jwt-decode";
 import axios from "axios";
 import { reset_user } from "../redux/features/user/user_slice";
+import { API_USER_URL, REQ_METHOD_GET_USER } from "../utils/user_url";
 
 const Header = () => {
   const {
@@ -33,9 +34,20 @@ const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [user_data, setUser_Data] = useState([]);
+
   const token = {
     token: Cookie.get("user_token"),
   };
+
+  // Fetching Data from database
+  useEffect(() => {
+    const decoded_token = jwt_decode(Cookie.get("user_token"));
+    axios
+      .get(API_USER_URL + REQ_METHOD_GET_USER + decoded_token._id)
+      .then((res) => {
+        setUser_Data(res.data);
+      });
+  }, []);
 
   useEffect(() => {
     if (isErrorAuth) {
@@ -58,7 +70,12 @@ const Header = () => {
 
   useEffect(() => {
     if (isSuccessUser_UpdateProfilePicture) {
-      setUser_Data(response_UpdateProfilePicture.data);
+      const decoded_token = jwt_decode(Cookie.get("user_token"));
+      axios
+        .get(API_USER_URL + REQ_METHOD_GET_USER + decoded_token._id)
+        .then((res) => {
+          setUser_Data(res.data);
+        });
     }
 
     dispatch(reset_user());
@@ -102,22 +119,6 @@ const Header = () => {
     }, 2000);
 
     return () => clearInterval(interval);
-  }, []);
-
-  // Check if token is valid
-  // useEffect(() => {
-  //   const interval = setInterval(() => {}, 2000);
-  //   return () => clearInterval(interval);
-  // }, []);
-
-  // Fetching Data from database
-  useEffect(() => {
-    const decoded_token = jwt_decode(Cookie.get("user_token"));
-    axios
-      .get(`http://localhost:5555/api/user/get-user/${decoded_token._id}`)
-      .then((res) => {
-        setUser_Data(res.data);
-      });
   }, []);
 
   return (

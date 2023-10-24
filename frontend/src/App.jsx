@@ -13,6 +13,7 @@ import jwt_decode from "jwt-decode";
 import HeaderPublic from "./components/HeaderPublic";
 import { useDispatch, useSelector } from "react-redux";
 import { check_token } from "./redux/features/auth/auth_slice";
+import CreateListing from "./pages/CreateListing";
 
 function App() {
   // const [token_data, setToken_Data] = useState({});
@@ -40,6 +41,7 @@ function App() {
           {/* Private Route */}
           <Route element={<PrivateRoute />}>
             <Route path="/profile" element={<Profile />} />
+            <Route path="/create-listing" element={<CreateListing />} />
           </Route>
         </Routes>
       </div>

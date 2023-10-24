@@ -481,7 +481,7 @@ const Profile = () => {
           ) : (
             <>
               <Link
-                to={"/listing"}
+                to={"/create-listing"}
                 className={`bg-green-700 text-white p-3 rounded-lg text-center hover:opacity-75 font-bold uppercase transition-all duration-500 ease-in-out `}
               >
                 Create Listing

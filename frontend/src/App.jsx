@@ -14,6 +14,7 @@ import HeaderPublic from "./components/HeaderPublic";
 import { useDispatch, useSelector } from "react-redux";
 import { check_token } from "./redux/features/auth/auth_slice";
 import CreateListing from "./pages/CreateListing";
+import Test from "./pages/Test/Test";
 
 function App() {
   // const [token_data, setToken_Data] = useState({});
@@ -37,6 +38,9 @@ function App() {
           <Route path="/sign-up" element={<Signup />} />
           <Route path="/home" element={<Home />} />
           <Route path="/about" element={<About />} />
+
+          {/* Test Route */}
+          <Route path="/test" element={<Test />} />
 
           {/* Private Route */}
           <Route element={<PrivateRoute />}>

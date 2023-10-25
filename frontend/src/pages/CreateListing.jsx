@@ -1,7 +1,71 @@
-import React from "react";
+import React, { useState } from "react";
 import Header from "../components/Header";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { app } from "../firebase/google_firebase";
 
 const CreateListing = () => {
+  const [files, setFiles] = useState([]);
+  const [formData, setFormData] = useState({ imageUrls: [] });
+  const [loading_animation, setLoading_Animation] = useState(false);
+  const [uploadError, setUploadError] = useState(false);
+
+  const storeImage = async (file) => {
+    return new Promise((resolve, reject) => {
+      const storage = getStorage(app);
+      const fileName = new Date().getTime() + file.name;
+      const storageRef = ref(storage, fileName);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log(`Upload is ${progress}% done`);
+        },
+        (error) => {
+          setUploadError(true);
+          reject(error);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            resolve(downloadURL);
+          });
+        }
+      );
+    });
+  };
+
+  const UploadImages = (e) => {
+    if (files.length > 0 && files.length + formData.imageUrls.length < 7) {
+      const promises = [];
+
+      for (let i = 0; i < files.length; i++) {
+        promises.push(storeImage(files[i]));
+      }
+
+      Promise.all(promises)
+        .then((urls) => {
+          setFormData({
+            ...formData,
+            imageUrls: formData.imageUrls.concat(urls),
+          });
+          setUploadError(false);
+        })
+        .catch((error) => {
+          setUploadError(
+            `Image size must be at least 2mb, Upload failed! / ${error} `
+          );
+        });
+    } else {
+      setUploadError(`Upload limit exceded, you can only upload 6 images.`);
+    }
+  };
   return (
     <>
       <Header />
@@ -9,7 +73,10 @@ const CreateListing = () => {
         <h1 className="text-3xl font-semibold text-center my-7">
           Create a Listing
         </h1>
-        <form className="flex flex-col sm:flex-row gap-4">
+        <form
+          className="flex flex-col sm:flex-row gap-4"
+          encType="multipart/form-data"
+        >
           {/* Left */}
           <div className="flex flex-col gap-4 flex-1">
             <input
@@ -20,7 +87,7 @@ const CreateListing = () => {
               className="border p-3 rounded-lg focus:outline-none"
               maxLength={62}
               minLength={10}
-              required
+              // required
             />
             <textarea
               type="text"
@@ -29,7 +96,7 @@ const CreateListing = () => {
               placeholder="Description"
               className="border p-3 rounded-lg focus:outline-none resize-none h-[8rem]"
               maxLength={1000}
-              required
+              // required
             />
             <input
               type="text"
@@ -37,7 +104,7 @@ const CreateListing = () => {
               id="address"
               placeholder="Address"
               className="border p-3 rounded-lg focus:outline-none"
-              required
+              // required
             />
 
             {/* Checkboxes */}
@@ -89,7 +156,7 @@ const CreateListing = () => {
                   min={1}
                   max={10}
                   defaultValue={1}
-                  required
+                  // required
                   className="p-3 border border-gray-300 rounded-lg"
                 />
                 <span>Bedroom</span>
@@ -102,7 +169,7 @@ const CreateListing = () => {
                   min={1}
                   max={10}
                   defaultValue={1}
-                  required
+                  // required
                   className="p-3 border border-gray-300 rounded-lg"
                 />
                 <span>Bathroom</span>
@@ -115,7 +182,7 @@ const CreateListing = () => {
                   min={1}
                   max={10}
                   defaultValue={0}
-                  required
+                  // required
                   className="p-3 border border-gray-300 rounded-lg"
                 />
                 <div className="flex flex-col items-center">
@@ -131,7 +198,7 @@ const CreateListing = () => {
                   min={1}
                   max={10}
                   defaultValue={0}
-                  required
+                  // required
                   className="p-3 border border-gray-300 rounded-lg"
                 />
                 <div className="flex flex-col items-center">
@@ -158,8 +225,13 @@ const CreateListing = () => {
                 accept="images/*"
                 multiple
                 className="p-3 border border-gray-300 rounded w-full"
+                onChange={(e) => setFiles(e.target.files)}
               />
-              <button className="p-3 text-green-700 border border-green-700 rounded uppercase hover:shadow-lg disabled:opacity-50">
+              <button
+                type="button"
+                onClick={UploadImages}
+                className="p-3 text-green-700 border border-green-700 rounded uppercase hover:shadow-lg disabled:opacity-50"
+              >
                 Upload
               </button>
             </div>

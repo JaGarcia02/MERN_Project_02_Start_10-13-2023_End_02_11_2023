@@ -1,4 +1,5 @@
 import Listing from "../models/listing_model.js";
+import fs from "fs";
 
 export const CreateListing = async (req, res) => {
   const {
@@ -17,6 +18,11 @@ export const CreateListing = async (req, res) => {
     userRef,
   } = req.body;
   try {
+    fs.rename(
+      `../storage/unit_pictures/${req.files.images[0].filename}`,
+      `../storage/unit_pictures/${req.files.images[0].filename}.png`,
+      (error) => console.log(error)
+    );
     const new_listing = await Listing.create({
       name: name,
       description: description,
@@ -29,7 +35,7 @@ export const CreateListing = async (req, res) => {
       parking: parking,
       type: type,
       offer: offer,
-      imageURLs: imageURLs,
+      imageURLs: `../storage/unit_pictures/${req.files.images[0].filename}.png`,
       userRef: userRef,
     });
     return res.status(201).json(new_listing);

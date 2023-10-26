@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import Header from "../components/Header";
 import {
   getDownloadURL,
@@ -20,6 +21,20 @@ const CreateListing = () => {
       const fileName = new Date().getTime() + file.name;
       const storageRef = ref(storage, fileName);
       const uploadTask = uploadBytesResumable(storageRef, file);
+      const [input_data, setInput_Data] = useState({
+        name: "",
+        description: "",
+        address: "",
+        regularPrice: "",
+        discountedPrice: "",
+        bathRooms: "",
+        bedRooms: "",
+        furnished: false,
+        parking: false,
+        type: "",
+        offer: false,
+        userRef: "",
+      });
 
       uploadTask.on(
         "state_changed",
@@ -27,6 +42,9 @@ const CreateListing = () => {
           const progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
           console.log(`Upload is ${progress}% done`);
+          if (progress === 100) {
+            setLoading_Animation(false);
+          }
         },
         (error) => {
           setUploadError(true);
@@ -42,7 +60,16 @@ const CreateListing = () => {
   };
 
   const UploadImages = (e) => {
-    if (files.length > 0 && files.length + formData.imageUrls.length < 7) {
+    if (files.length == 0) {
+      setUploadError(`No image selected!`);
+      setTimeout(() => {
+        setUploadError(null);
+      }, 5000);
+    } else if (
+      files.length > 0 &&
+      files.length + formData.imageUrls.length < 7
+    ) {
+      setLoading_Animation(true);
       const promises = [];
 
       for (let i = 0; i < files.length; i++) {
@@ -61,16 +88,30 @@ const CreateListing = () => {
           setUploadError(
             `Image size must be at least 2mb, Upload failed! / ${error} `
           );
+          setTimeout(() => {
+            setUploadError(null);
+          }, 5000);
         });
     } else {
       setUploadError(`Upload limit exceded, you can only upload 6 images.`);
+      setTimeout(() => {
+        setUploadError(null);
+      }, 5000);
     }
   };
+
+  const RemoveImage = (index) => {
+    setFormData({
+      ...formData,
+      imageUrls: formData.imageUrls.filter((_, i) => i !== index),
+    });
+  };
+
   return (
     <>
       <Header />
       <main className="p-3 max-w-4xl mx-auto">
-        <h1 className="text-3xl font-semibold text-center my-7">
+        <h1 className="text-3xl font-bold text-center my-7">
           Create a Listing
         </h1>
         <form
@@ -224,18 +265,69 @@ const CreateListing = () => {
                 id="images"
                 accept="images/*"
                 multiple
+                disabled={loading_animation ? true : false}
                 className="p-3 border border-gray-300 rounded w-full"
                 onChange={(e) => setFiles(e.target.files)}
               />
               <button
+                disabled={loading_animation ? true : false}
                 type="button"
                 onClick={UploadImages}
-                className="p-3 text-green-700 border border-green-700 rounded uppercase hover:shadow-lg disabled:opacity-50"
+                className={`p-3 text-green-700 border border-green-700 rounded uppercase hover:shadow-lg disabled:opacity-50 ${
+                  loading_animation ? "bg-green-700 opacity-50 w-[7rem]" : ""
+                }`}
               >
-                Upload
+                {loading_animation ? (
+                  <>
+                    <div className="flex justify-center items-center text-[20px] text-white">
+                      <AiOutlineLoading3Quarters className="animate-spin" />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <span>Upload</span>
+                  </>
+                )}
               </button>
             </div>
-            <button className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-75 disabled:opacity-50">
+            <div
+              className={`w-full ${
+                formData.imageUrls.length > 0 ? "h-[25px]" : ""
+              } ] flex justify-center items-center text-[14px] font-bold`}
+            >
+              <p className="text-red-700">{uploadError && uploadError}</p>
+            </div>
+            <div
+              className={` ${
+                formData.imageUrls.length > 0
+                  ? "h-[21.5rem] overflow-scroll"
+                  : ""
+              }`}
+            >
+              {formData.imageUrls.length > 0 &&
+                formData.imageUrls.map((url, index) => (
+                  <>
+                    <div
+                      key={url}
+                      className="flex justify-between p-3 border items-center "
+                    >
+                      <img
+                        src={url}
+                        alt="listing image"
+                        className="w-20 h-20 object-contain rounded-lg"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => RemoveImage(index)}
+                        className="p-3 text-white bg-red-700 h-[35px] rounded-lg uppercase hover:opacity-75 transition-all duration-200 disabled:opacity-50 flex justify-center items-center font-bold"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </>
+                ))}
+            </div>
+            <button className="p-3 bg-slate-700 text-white rounded-lg uppercase transition-all duration-200 hover:opacity-75 disabled:opacity-50">
               Create Listing
             </button>
           </div>

@@ -14,7 +14,6 @@ export const CreateListing = async (req, res) => {
     parking,
     type,
     offer,
-    imageURLs,
     userRef,
   } = req.body;
   try {

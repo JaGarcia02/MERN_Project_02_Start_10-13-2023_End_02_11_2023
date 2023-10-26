@@ -15,13 +15,9 @@ export const CreateListing = async (req, res) => {
     type,
     offer,
     userRef,
+    imageURLs,
   } = req.body;
   try {
-    fs.rename(
-      `../storage/unit_pictures/${req.files.images[0].filename}`,
-      `../storage/unit_pictures/${req.files.images[0].filename}.png`,
-      (error) => console.log(error)
-    );
     const new_listing = await Listing.create({
       name: name,
       description: description,
@@ -34,7 +30,7 @@ export const CreateListing = async (req, res) => {
       parking: parking,
       type: type,
       offer: offer,
-      imageURLs: `../storage/unit_pictures/${req.files.images[0].filename}.png`,
+      imageURLs: imageURLs,
       userRef: userRef,
     });
     return res.status(201).json(new_listing);

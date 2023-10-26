@@ -8,12 +8,44 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../firebase/google_firebase";
+import axios from "axios";
+import jwt_decode from "jwt-decode";
+import Cookie from "js-cookie";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const CreateListing = () => {
+  const decoded_token = jwt_decode(Cookie.get("user_token"));
   const [files, setFiles] = useState([]);
   const [formData, setFormData] = useState({ imageUrls: [] });
   const [loading_animation, setLoading_Animation] = useState(false);
   const [uploadError, setUploadError] = useState(false);
+  const [input_data, setInput_Data] = useState({
+    name: "",
+    description: "",
+    address: "",
+    regularPrice: 0,
+    discountedPrice: 0,
+    bathRooms: 1,
+    bedRooms: 1,
+    furnished: false,
+    parking: false,
+    type: "rent",
+    offer: false,
+    userRef: "",
+    sell: false,
+    rent: false,
+  });
+
+  const notify_success = () => {
+    toast.success("Listing Created Successful!", {
+      position: "bottom-left",
+      hideProgressBar: false,
+      autoClose: 1000,
+      pauseOnHover: false,
+      theme: "colored",
+    });
+  };
 
   const storeImage = async (file) => {
     return new Promise((resolve, reject) => {
@@ -21,20 +53,6 @@ const CreateListing = () => {
       const fileName = new Date().getTime() + file.name;
       const storageRef = ref(storage, fileName);
       const uploadTask = uploadBytesResumable(storageRef, file);
-      const [input_data, setInput_Data] = useState({
-        name: "",
-        description: "",
-        address: "",
-        regularPrice: "",
-        discountedPrice: "",
-        bathRooms: "",
-        bedRooms: "",
-        furnished: false,
-        parking: false,
-        type: "",
-        offer: false,
-        userRef: "",
-      });
 
       uploadTask.on(
         "state_changed",
@@ -107,6 +125,36 @@ const CreateListing = () => {
     });
   };
 
+  const CreateListing = (e) => {
+    e.preventDefault();
+    if (formData.imageUrls.length === 0) {
+      alert("please upload image!");
+    } else {
+      axios
+        .post("http://localhost:5555/api/listing/create-listing", {
+          name: input_data.name,
+          description: input_data.description,
+          address: input_data.address,
+          regularPrice: input_data.regularPrice,
+          discountedPrice: input_data.discountedPrice,
+          bathRooms: input_data.bathRooms,
+          bedRooms: input_data.bedRooms,
+          furnished: input_data.furnished,
+          parking: input_data.parking,
+          type: input_data.type,
+          offer: input_data.offer,
+          imageURLs: formData.imageUrls,
+          userRef: decoded_token.email,
+        })
+        .then((res) => {
+          notify_success();
+        })
+        .catch((error) => {
+          alert("Error!");
+        });
+    }
+  };
+
   return (
     <>
       <Header />
@@ -115,6 +163,7 @@ const CreateListing = () => {
           Create a Listing
         </h1>
         <form
+          onSubmit={CreateListing}
           className="flex flex-col sm:flex-row gap-4"
           encType="multipart/form-data"
         >
@@ -128,34 +177,71 @@ const CreateListing = () => {
               className="border p-3 rounded-lg focus:outline-none"
               maxLength={62}
               minLength={10}
-              // required
+              required
+              onChange={(e) =>
+                setInput_Data({ ...input_data, name: e.target.value })
+              }
+              value={input_data.name}
             />
             <textarea
               type="text"
               name=""
               id="description"
               placeholder="Description"
-              className="border p-3 rounded-lg focus:outline-none resize-none h-[8rem]"
+              className="border p-3 rounded-lg focus:outline-none resize-none h-[8rem] text-left"
               maxLength={1000}
-              // required
+              required
+              onChange={(e) =>
+                setInput_Data({ ...input_data, description: e.target.value })
+              }
+              value={input_data.description}
             />
+
             <input
               type="text"
               name=""
               id="address"
               placeholder="Address"
               className="border p-3 rounded-lg focus:outline-none"
-              // required
+              required
+              onChange={(e) =>
+                setInput_Data({ ...input_data, address: e.target.value })
+              }
+              value={input_data.address}
             />
-
             {/* Checkboxes */}
             <div className="flex flex-wrap gap-6">
               <div className="flex gap-2">
-                <input type="checkbox" name="sell" id="sell" className="w-5" />
+                <input
+                  type="checkbox"
+                  name="sell"
+                  id="sell"
+                  className="w-5"
+                  onClick={() => {
+                    {
+                      setInput_Data({ ...input_data, type: "sell" });
+                      input_data.type === "sale"
+                        ? setInput_Data({ ...input_data, type: "sale" })
+                        : this.unCheck();
+                    }
+                  }}
+                />
                 <span>Sell</span>
               </div>
               <div className="flex gap-2">
-                <input type="checkbox" name="rent" id="rent" className="w-5" />
+                <input
+                  type="checkbox"
+                  name="rent"
+                  id="rent"
+                  className="w-5"
+                  onClick={() => {
+                    {
+                      input_data.type === "rent"
+                        ? setInput_Data({ ...input_data, type: "rent" })
+                        : this.unCheck();
+                    }
+                  }}
+                />
                 <span>Rent</span>
               </div>
               <div className="flex gap-2">
@@ -164,6 +250,14 @@ const CreateListing = () => {
                   name="parking"
                   id="parking"
                   className="w-5"
+                  checked={input_data.parking === true}
+                  onClick={() => {
+                    {
+                      input_data.parking === false
+                        ? setInput_Data({ ...input_data, parking: true })
+                        : setInput_Data({ ...input_data, parking: false });
+                    }
+                  }}
                 />
                 <span>Parking spot</span>
               </div>
@@ -173,6 +267,14 @@ const CreateListing = () => {
                   name="furnished"
                   id="furnished"
                   className="w-5"
+                  checked={input_data.furnished === true}
+                  onClick={() => {
+                    {
+                      input_data.furnished === false
+                        ? setInput_Data({ ...input_data, furnished: true })
+                        : setInput_Data({ ...input_data, furnished: false });
+                    }
+                  }}
                 />
                 <span>Furnished</span>
               </div>
@@ -182,11 +284,18 @@ const CreateListing = () => {
                   name="offer"
                   id="offer"
                   className="w-5"
+                  checked={input_data.offer === true}
+                  onClick={() => {
+                    {
+                      input_data.offer === false
+                        ? setInput_Data({ ...input_data, offer: true })
+                        : setInput_Data({ ...input_data, offer: false });
+                    }
+                  }}
                 />
                 <span>Offer</span>
               </div>
             </div>
-
             {/* Bed rooms and Bath rooms */}
             <div className="flex flex-wrap gap-6">
               <div className="flex items-center gap-2">
@@ -196,9 +305,12 @@ const CreateListing = () => {
                   name="bedroom"
                   min={1}
                   max={10}
-                  defaultValue={1}
-                  // required
+                  value={input_data.bedRooms}
+                  required
                   className="p-3 border border-gray-300 rounded-lg"
+                  onChange={(e) => {
+                    setInput_Data({ ...input_data, bedRooms: e.target.value });
+                  }}
                 />
                 <span>Bedroom</span>
               </div>
@@ -209,8 +321,11 @@ const CreateListing = () => {
                   name="bathroom"
                   min={1}
                   max={10}
-                  defaultValue={1}
-                  // required
+                  value={input_data.bathRooms}
+                  required
+                  onChange={(e) => {
+                    setInput_Data({ ...input_data, bathRooms: e.target.value });
+                  }}
                   className="p-3 border border-gray-300 rounded-lg"
                 />
                 <span>Bathroom</span>
@@ -220,10 +335,16 @@ const CreateListing = () => {
                   type="number"
                   id="regularprice"
                   name="regularprice"
-                  min={1}
-                  max={10}
-                  defaultValue={0}
-                  // required
+                  min={100}
+                  max={100000000}
+                  value={input_data.regularPrice}
+                  required
+                  onChange={(e) => {
+                    setInput_Data({
+                      ...input_data,
+                      regularPrice: e.target.value,
+                    });
+                  }}
                   className="p-3 border border-gray-300 rounded-lg"
                 />
                 <div className="flex flex-col items-center">
@@ -236,10 +357,16 @@ const CreateListing = () => {
                   type="number"
                   id="discountedprice"
                   name="discountedprice"
-                  min={1}
-                  max={10}
-                  defaultValue={0}
-                  // required
+                  min={50}
+                  max={100000000}
+                  value={input_data.discountedPrice}
+                  required
+                  onChange={(e) => {
+                    setInput_Data({
+                      ...input_data,
+                      discountedPrice: e.target.value,
+                    });
+                  }}
                   className="p-3 border border-gray-300 rounded-lg"
                 />
                 <div className="flex flex-col items-center">
@@ -327,12 +454,16 @@ const CreateListing = () => {
                   </>
                 ))}
             </div>
-            <button className="p-3 bg-slate-700 text-white rounded-lg uppercase transition-all duration-200 hover:opacity-75 disabled:opacity-50">
+            <button
+              type="submit"
+              className="p-3 bg-slate-700 text-white rounded-lg uppercase transition-all duration-200 hover:opacity-75 disabled:opacity-50"
+            >
               Create Listing
             </button>
           </div>
         </form>
       </main>
+      <ToastContainer />
     </>
   );
 };

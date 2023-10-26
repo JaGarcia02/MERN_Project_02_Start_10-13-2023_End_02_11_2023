@@ -91,14 +91,6 @@ export const SignIn = async (req, res) => {
           login_method: "System",
         });
     }
-
-    // return res
-    //   .cookie("access_token", token, {
-    //     httpOnly: true,
-    //     expires: new Date(Date.now() + 60 * 60 * 24 * 1000 * 1),
-    //   })
-    //   .status(200)
-    //   .json({ token });
   } catch (error) {
     return res.status(500).json({ system_message: error.message });
   }

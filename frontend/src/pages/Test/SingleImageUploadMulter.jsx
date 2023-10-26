@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 
-const Test = () => {
+const SingleImageUploadMulter = () => {
   const [image, setImage] = useState();
   const [image_data, setImage_Data] = useState([]);
   console.log(image_data[0]?.image_path);
@@ -32,7 +32,7 @@ const Test = () => {
   return (
     <>
       <div className="w-screen h-screen p-3 flex flex-col justify-center items-center">
-        <h1 className="p-3 text-[2rem] font-bold">Multiple Image Upload</h1>
+        <h1 className="p-3 text-[2rem] font-bold">Image Upload Local</h1>
         {image_data.map((data, index) => {
           const imageUrl = "/server" + data.image_path;
 
@@ -58,19 +58,6 @@ const Test = () => {
               onChange={(e) => setImage(e.target.files[0])}
             />
           </div>
-          {/* <div className="p-3 flex justify-center items-center">
-            <label className="px-[2rem] font-semibold text-[16px]" htmlFor="">
-              Upoad Field 2
-            </label>
-            <input
-              type="file"
-              name="images2"
-              id=""
-              multiple
-              accept="images/*"
-              onChange={(e) => setFormData(e.target.files)}
-            />
-          </div> */}
 
           <div className="p-3 flex justify-center items-start">
             <button
@@ -87,4 +74,4 @@ const Test = () => {
   );
 };
 
-export default Test;
+export default SingleImageUploadMulter;

@@ -71,3 +71,8 @@ Improvements = {
     - Responsive design on each pages and components
 
 }
+
+Things to learn:
+
+    - Upload multiple file using multer.
+    - Save Array data type in the database.

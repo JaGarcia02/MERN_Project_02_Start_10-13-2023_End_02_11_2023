@@ -366,7 +366,9 @@ const Profile = () => {
             src={user_data.photo}
             alt="profile"
             onClick={() => {
-              trigger_button
+              toggle_disable === true
+                ? setTrigger_Button(false)
+                : trigger_button
                 ? setTrigger_Button(false)
                 : setTrigger_Button(true);
             }}

@@ -13,12 +13,20 @@ import jwt_decode from "jwt-decode";
 import Cookie from "js-cookie";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import {
+  API_LISTING_URL,
+  REQ_METHOD_CREATE_LISTING,
+} from "../utils/listing_url";
 
 const CreateListing = () => {
   const decoded_token = jwt_decode(Cookie.get("user_token"));
   const [files, setFiles] = useState([]);
   const [formData, setFormData] = useState({ imageUrls: [] });
   const [loading_animation, setLoading_Animation] = useState(false);
+  const [disable_button, setDisable_Button] = useState({
+    update: false,
+    create_listing: false,
+  });
   const [uploadError, setUploadError] = useState(false);
   const [input_data, setInput_Data] = useState({
     name: "",
@@ -78,6 +86,9 @@ const CreateListing = () => {
   };
 
   const UploadImages = (e) => {
+    if (formData.imageUrls.length === 6) {
+      setDisable_Button({ ...disable_button, update: true });
+    }
     if (files.length == 0) {
       setUploadError(`No image selected!`);
       setTimeout(() => {
@@ -131,7 +142,7 @@ const CreateListing = () => {
       alert("please upload image!");
     } else {
       axios
-        .post("http://localhost:5555/api/listing/create-listing", {
+        .post(API_LISTING_URL + REQ_METHOD_CREATE_LISTING, {
           name: input_data.name,
           description: input_data.description,
           address: input_data.address,
@@ -148,6 +159,13 @@ const CreateListing = () => {
         })
         .then((res) => {
           notify_success();
+          setFormData({ ...formData, imageUrls: "" });
+          setDisable_Button({ ...disable_button, create_listing: true });
+          setTimeout(() => {
+            setDisable_Button({ ...disable_button, update: false });
+            setDisable_Button({ ...disable_button, create_listing: false });
+            window.location.reload();
+          }, 2000);
         })
         .catch((error) => {
           alert("Error!");
@@ -217,13 +235,9 @@ const CreateListing = () => {
                   name="sell"
                   id="sell"
                   className="w-5"
+                  checked={input_data.type === "sell"}
                   onClick={() => {
-                    {
-                      setInput_Data({ ...input_data, type: "sell" });
-                      input_data.type === "sale"
-                        ? setInput_Data({ ...input_data, type: "sale" })
-                        : this.unCheck();
-                    }
+                    setInput_Data({ ...input_data, type: "sell" });
                   }}
                 />
                 <span>Sell</span>
@@ -234,12 +248,9 @@ const CreateListing = () => {
                   name="rent"
                   id="rent"
                   className="w-5"
+                  checked={input_data.type === "rent"}
                   onClick={() => {
-                    {
-                      input_data.type === "rent"
-                        ? setInput_Data({ ...input_data, type: "rent" })
-                        : this.unCheck();
-                    }
+                    setInput_Data({ ...input_data, type: "rent" });
                   }}
                 />
                 <span>Rent</span>
@@ -397,10 +408,12 @@ const CreateListing = () => {
                 onChange={(e) => setFiles(e.target.files)}
               />
               <button
-                disabled={loading_animation ? true : false}
+                disabled={
+                  loading_animation || disable_button.update ? true : false
+                }
                 type="button"
                 onClick={UploadImages}
-                className={`p-3 text-green-700 border border-green-700 rounded uppercase hover:shadow-lg disabled:opacity-50 ${
+                className={`p-3 text-green-700 border-[2px] border-green-700 font-semibold rounded uppercase hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed ${
                   loading_animation ? "bg-green-700 opacity-50 w-[7rem]" : ""
                 }`}
               >
@@ -455,10 +468,21 @@ const CreateListing = () => {
                 ))}
             </div>
             <button
+              disabled={disable_button.create_listing ? true : false}
               type="submit"
               className="p-3 bg-slate-700 text-white rounded-lg uppercase transition-all duration-200 hover:opacity-75 disabled:opacity-50"
             >
-              Create Listing
+              {disable_button.create_listing ? (
+                <>
+                  <div className="flex justify-center items-center text-[20px] text-white">
+                    <AiOutlineLoading3Quarters className="animate-spin" />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <span> Create Listing</span>
+                </>
+              )}
             </button>
           </div>
         </form>

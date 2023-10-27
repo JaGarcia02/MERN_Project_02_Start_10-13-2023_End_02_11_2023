@@ -26,16 +26,6 @@ const Signin = () => {
   const dispatch = useDispatch();
 
   // notfication tostify
-  const notify_success = () => {
-    toast.success("Login Successful!", {
-      position: "bottom-left",
-      hideProgressBar: false,
-      autoClose: 1000,
-      pauseOnHover: false,
-      theme: "colored",
-    });
-  };
-
   const notify_error_403_email = () => {
     toast.error(" Email not found, please try again or signup!", {
       position: "bottom-left",

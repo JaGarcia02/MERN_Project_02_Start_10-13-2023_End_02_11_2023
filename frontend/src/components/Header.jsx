@@ -20,11 +20,6 @@ const Header = () => {
   } = useSelector((state) => state.Auth_User);
   const {
     User,
-    isLoadingUser_Delete,
-    isSuccessUser_Delete,
-    isErrorUserUser_Delete,
-    responseMessage_Delete,
-    response_Delete,
     isLoadingUser_UpdateProfilePicture,
     isSuccessUser_UpdateProfilePicture,
     isErrorUser_UpdateProfilePicture,
@@ -91,32 +86,38 @@ const Header = () => {
   // Checking token & for Authentication System
   useEffect(() => {
     const interval = setInterval(() => {
-      if (!Cookie.get("user_token")) {
-        alert("No Token Found! Plase Signin again.\nSystem Admin");
-        Cookie.remove("user_token");
-        localStorage.removeItem("user_token");
-        navigate("/");
-        location.reload();
-      } else {
-        const LocalStorage_Token = {
-          token: localStorage.getItem("user_token"),
-        };
-        if (
-          JSON.stringify(Cookie.get("user_token")) !== LocalStorage_Token.token
-        ) {
-          alert(
-            "Invalid Token / Token not recognize! Plase Signin again.\nSystem Admin"
-          );
-
+      switch (!Cookie.get("user_token")) {
+        case true: {
+          alert("No Token Found! Plase Signin again.\nSystem Admin");
           Cookie.remove("user_token");
           localStorage.removeItem("user_token");
           navigate("/");
           location.reload();
+          break;
+        }
+        case false: {
+          const LocalStorage_Token = {
+            token: localStorage.getItem("user_token"),
+          };
+          if (
+            JSON.stringify(Cookie.get("user_token")) !==
+            LocalStorage_Token.token
+          ) {
+            alert(
+              "Invalid Token / Token not recognize! Plase Signin again.\nSystem Admin"
+            );
+
+            Cookie.remove("user_token");
+            localStorage.removeItem("user_token");
+            navigate("/");
+            location.reload();
+            break;
+          }
         }
       }
 
       dispatch(check_token(token));
-    }, 2000);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, []);

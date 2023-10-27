@@ -27,7 +27,7 @@ function App() {
           <Route path="/test2" element={<MultipleImageUploadMulter />} />
 
           {/* Private Route */}
-          <Route element={<PrivateRoute />}>
+          <Route path="/" element={<PrivateRoute />}>
             <Route path="/profile" element={<Profile />} />
             <Route path="/create-listing" element={<CreateListing />} />
           </Route>

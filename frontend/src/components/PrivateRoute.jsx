@@ -8,7 +8,7 @@ import Error_403 from "../pages/Error/Error_403";
 
 const PrivateRoute = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+
   const token = {
     token: Cookie.get("user_token"),
   };
@@ -59,7 +59,7 @@ const PrivateRoute = () => {
     return () => clearInterval(interval);
   }, []);
 
-  return user_token == null ? <Error_403 /> : <Outlet />;
+  return user_token == null ? <Navigate to={"/"} /> : <Outlet />;
 };
 
 export default PrivateRoute;

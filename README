@@ -1,7 +1,7 @@
 REAL ESTATE PROJECT
 
 Project state: Work in progress
-Status: 21.54%
+Status: 68.22%
 
 Development Traker:
 
@@ -58,7 +58,8 @@ Octobrer 27/23 = {
 
 October 28/23 = {
 
-     need to fix the useStates in the sign in and sign up, loading animations are still not behaving properly. Need to revise the logic and clean some codes in the Signin.jsx and Signup.jsx.
+    - Need to fix the useStates in the sign in and sign up, loading animations are still not behaving properly.
+    Need to revise the logic and clean some codes in the Signin.jsx and Signup.jsx.
 
 }
 
@@ -72,11 +73,12 @@ October 24/23 = Need to create the Create Listing functionalities in the fronten
 loading animation when functions are fullfilled and loading. (pending)
 
 October 26/23 = Function of elements in the frontend and save to database when creating a Listing. Add loading
-animation and disable function when a function is fullfilled. (pending)
+animation and disable function when a function is fullfilled. (Done)
 
-October 27/23 = Changed the Private route functionalities. Need to revise and clean some code and conditions. (pending)
+October 27/23 = Changed the Private route functionalities. Need to revise and clean some code and conditions. (Done)
 
-October 28/23 = Created the Get Listing API, now will work on UI of the show listing.
+October 28/23 = Created the Get Listing API, now will work on UI of the show listing. Done Adding Delete Listing and
+Update Listing in the API, need to implement it to the Forntend.
 
 Try to add = {
 

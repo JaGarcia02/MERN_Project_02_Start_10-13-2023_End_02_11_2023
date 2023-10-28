@@ -12,6 +12,7 @@ import { app } from "../firebase/google_firebase";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import axios from "axios";
 import { API_USER_URL, REQ_METHOD_GET_USER } from "../utils/user_url";
+import { API_LISTING_URL, REQ_METHOD_GET_LISTING } from "../utils/listing_url";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Link, useNavigate } from "react-router-dom";
@@ -50,6 +51,12 @@ const Profile = () => {
     email: "",
     password: "",
     photo: "",
+  });
+  const [listing, setListing] = useState({
+    error: false,
+    listing_data: [],
+    open: false,
+    disable: false,
   });
   const {
     User,
@@ -348,6 +355,24 @@ const Profile = () => {
     }, 2000);
   };
 
+  const ShowListing = () => {
+    setListing({ ...listing, open: true });
+
+    axios
+      .get(API_LISTING_URL + REQ_METHOD_GET_LISTING + decoded_token._id)
+      .then((res) => {
+        setListing({ ...listing, listing_data: res.data });
+      })
+      .catch((error) => {
+        console.log(error);
+        setListing({ ...listing, error: true });
+      });
+
+    console.log(listing.listing_data);
+  };
+
+  console.log(listing.open);
+
   return (
     <>
       <Header />
@@ -506,6 +531,58 @@ const Profile = () => {
           >
             <span className="disabled:cursor-not-allowed">Sign Out</span>
           </button>
+        </div>
+
+        <div className="mt-[1rem] w-full text-center flex flex-col justify-center items-center">
+          <button
+            onClick={ShowListing}
+            className="text-green-700 font-bold text-[20px] hover:opacity-75 hover:underline transition-all duration-200"
+          >
+            Show Listing
+          </button>
+
+          <p className="text-red-700 font-semibold text-[16px] mt-[1rem]">
+            {listing.error ? "Error showing of listing, please try again!" : ""}
+          </p>
+        </div>
+
+        {/* All listings */}
+        <div className="flex flex-col gap-4">
+          <div className="text-center p-3 text-[1.5rem] font-semibold">
+            <h1>Your Listing</h1>
+          </div>
+          {listing.listing_data.map((data) => {
+            console.log(data);
+            return (
+              <div
+                key={data._id}
+                className="border rounded-lgnde p-3 flex justify-between items-center gap-4"
+              >
+                <Link to={`/listing/${data._id}`}>
+                  <img
+                    src={data.imageURLs[0]}
+                    alt="listing cover"
+                    className="h-16 w-16 object-contain"
+                  />
+                </Link>
+                <Link
+                  to={`/listing/${data._id}`}
+                  className="flex-1 text-slate-700 font-semibold  hover:underline truncate"
+                >
+                  <p>{data.name}</p>
+                </Link>
+
+                <div className="flex flex-col w-[100px]">
+                  <button className="bg-red-700 h-[25px] mb-2 text-white font-bold rounded-md uppercase hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed  transition-all duration-500 ease-in-out ">
+                    Delete
+                  </button>
+                  <button className="bg-orange-500 h-[25px] text-white font-bold rounded-md uppercase hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed  transition-all duration-500 ease-in-out ">
+                    Update
+                  </button>
+                </div>
+              </div>
+            );
+          })}
         </div>
         <ToastContainer />
       </div>

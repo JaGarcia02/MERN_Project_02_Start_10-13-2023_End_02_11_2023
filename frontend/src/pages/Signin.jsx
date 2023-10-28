@@ -100,7 +100,7 @@ const Signin = () => {
       setTimeout(() => {
         setIsLoading_Signin(isLoadingAuth_Login);
         setLoading_Animation(isLoadingAuth_Login);
-        navigate("/home");
+        // navigate("/home");
       }, 2000);
     }
 
@@ -126,6 +126,10 @@ const Signin = () => {
     response_Google,
     loading_animation,
   ]);
+
+  console.log(response_Login.data.login_method);
+  console.log(isLoading_Signin);
+  console.log(isLoadingAuth_Login);
 
   return (
     <>
@@ -170,8 +174,8 @@ const Signin = () => {
               className="bg-slate-700 text-white font-bold p-3 rounded-lg uppercase hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed h-[50px] transition-all duration-500 ease-in-out "
             >
               {isLoading_Signin &&
-              isLoadingAuth_Login &&
-              response_Login?.data?.login_method == "System" ? (
+              !isLoadingAuth_Login &&
+              response_Login.data.login_method === "System" ? (
                 <>
                   <div className="flex justify-center items-center text-[20px]">
                     <AiOutlineLoading3Quarters className="animate-spin" />

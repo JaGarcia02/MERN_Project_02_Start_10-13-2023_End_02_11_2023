@@ -56,6 +56,12 @@ Octobrer 27/23 = {
 
 }
 
+October 28/23 = {
+
+     need to fix the useStates in the sign in and sign up, loading animations are still not behaving properly. Need to revise the logic and clean some codes in the Signin.jsx and Signup.jsx.
+
+}
+
 Curret Checkpoint:
 
 October 22/23 = Need to finish the Signout/Logout function (Done)
@@ -69,6 +75,8 @@ October 26/23 = Function of elements in the frontend and save to database when c
 animation and disable function when a function is fullfilled. (pending)
 
 October 27/23 = Changed the Private route functionalities. Need to revise and clean some code and conditions. (pending)
+
+October 28/23 = Created the Get Listing API, now will work on UI of the show listing.
 
 Try to add = {
 

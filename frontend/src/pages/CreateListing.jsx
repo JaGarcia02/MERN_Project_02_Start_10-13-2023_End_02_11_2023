@@ -140,7 +140,7 @@ const CreateListing = () => {
     e.preventDefault();
     if (formData.imageUrls.length === 0) {
       alert("please upload image!");
-    } else if (input_data.regularPrice < input_data.discountedPrice) {
+    } else if (+input_data.regularPrice < +input_data.discountedPrice) {
       alert("Discount price must be lower than regular price!");
     } else {
       axios

@@ -60,7 +60,7 @@ export const UpdateUser = async (req, res) => {
       return res.status(200).json(updated_user);
     }
   } catch (error) {
-    throw new Error(error);
+    return res.status(500).json({ system_message: error.message });
   }
 };
 
@@ -77,7 +77,7 @@ export const UpdateProfilePicture = async (req, res) => {
     const updated_profile_picture = await User.findById({ _id: id });
     return res.status(200).json(updated_profile_picture);
   } catch (error) {
-    throw new Error(error);
+    return res.status(500).json({ system_message: error.message });
   }
 };
 
@@ -87,6 +87,6 @@ export const DeleteUser = async (req, res) => {
     const deleted_user = await User.deleteOne({ _id: id });
     return res.status(200).json(deleted_user);
   } catch (error) {
-    throw new Error(error);
+    return res.status(500).json({ system_message: error.message });
   }
 };

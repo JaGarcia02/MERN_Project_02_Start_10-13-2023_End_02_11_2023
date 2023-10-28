@@ -140,6 +140,8 @@ const CreateListing = () => {
     e.preventDefault();
     if (formData.imageUrls.length === 0) {
       alert("please upload image!");
+    } else if (input_data.regularPrice < input_data.discountedPrice) {
+      alert("Discount price must be lower than regular price!");
     } else {
       axios
         .post(API_LISTING_URL + REQ_METHOD_CREATE_LISTING, {
@@ -155,7 +157,7 @@ const CreateListing = () => {
           type: input_data.type,
           offer: input_data.offer,
           imageURLs: formData.imageUrls,
-          userRef: decoded_token.email,
+          userRef: decoded_token._id,
         })
         .then((res) => {
           notify_success();
@@ -346,7 +348,7 @@ const CreateListing = () => {
                   type="number"
                   id="regularprice"
                   name="regularprice"
-                  min={100}
+                  min={10}
                   max={100000000}
                   value={input_data.regularPrice}
                   required
@@ -360,31 +362,45 @@ const CreateListing = () => {
                 />
                 <div className="flex flex-col items-center">
                   <p className="">Regular Price</p>
-                  <span className="text-xs">($ / month)</span>
+                  {input_data.type === "rent" ? (
+                    <span className="text-xs">($ / month)</span>
+                  ) : (
+                    ""
+                  )}
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <input
-                  type="number"
-                  id="discountedprice"
-                  name="discountedprice"
-                  min={50}
-                  max={100000000}
-                  value={input_data.discountedPrice}
-                  required
-                  onChange={(e) => {
-                    setInput_Data({
-                      ...input_data,
-                      discountedPrice: e.target.value,
-                    });
-                  }}
-                  className="p-3 border border-gray-300 rounded-lg"
-                />
-                <div className="flex flex-col items-center">
-                  <p className="">Discounted Price</p>
-                  <span className="text-xs">($ / month)</span>
-                </div>
-              </div>
+              {input_data.offer ? (
+                <>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      id="discountedprice"
+                      name="discountedprice"
+                      min={0}
+                      max={100000000}
+                      value={input_data.discountedPrice}
+                      required
+                      onChange={(e) => {
+                        setInput_Data({
+                          ...input_data,
+                          discountedPrice: e.target.value,
+                        });
+                      }}
+                      className="p-3 border border-gray-300 rounded-lg"
+                    />
+                    <div className="flex flex-col items-center">
+                      <p className="">Discounted Price</p>
+                      {input_data.type === "rent" ? (
+                        <span className="text-xs">($ / month)</span>
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                  </div>
+                </>
+              ) : (
+                ""
+              )}
             </div>
           </div>
 

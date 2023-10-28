@@ -42,7 +42,7 @@ export const SignUp = async (req, res) => {
     });
     return res.status(201).json(newUser);
   } catch (error) {
-    throw new Error(error);
+    return res.status(500).json({ system_message: error.message });
   }
 };
 // ************************************************************** Signup ************************************************************** //

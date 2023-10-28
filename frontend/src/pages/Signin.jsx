@@ -9,9 +9,10 @@ import OAuth from "../components/OAuth";
 
 const Signin = () => {
   const [input, setInput] = useState({ email: "", password: "" });
-  const [isLoading_Signin, setIsLoading_Signin] = useState(false);
-  const [loading_animation, setLoading_Animation] = useState(false);
-  const [toggle_disable, setToggle_Disable] = useState(false);
+  const [elementState, setElement_State] = useState({
+    disable: false,
+    animation: false,
+  });
   const {
     Auth_User,
     response_Login,
@@ -61,47 +62,49 @@ const Signin = () => {
 
   useEffect(() => {
     if (isLoadingAuth_Login) {
-      setIsLoading_Signin(true);
-      setLoading_Animation(true);
+      setElement_State({ ...elementState, loading: true, animation: true });
     }
 
     if (isErrorAuth_Login) {
-      setIsLoading_Signin(false);
-      setLoading_Animation(false);
+      setElement_State({
+        ...elementState,
+        animation: false,
+        disable: false,
+      });
     }
 
     if (isSuccessAuth_Google) {
       if (response_Google?.status == 201) {
-        // notify_success_google();
-        setIsLoading_Signin(true);
-        setLoading_Animation(true);
-        setToggle_Disable(true);
+        setElement_State({ ...elementState, disable: true });
         setTimeout(() => {
-          setIsLoading_Signin(false);
-          setLoading_Animation(false);
+          setElement_State({ ...elementState, disable: false });
         }, 2000);
       }
 
       if (response_Google?.status == 200) {
-        // notify_success();
-        setIsLoading_Signin(true);
-        setLoading_Animation(true);
-        setToggle_Disable(true);
+        setElement_State({ ...elementState, disable: true });
         setTimeout(() => {
-          setIsLoading_Signin(false);
-          setLoading_Animation(false);
+          setElement_State({ ...elementState, disable: false });
         }, 2000);
       }
     }
 
     if (isSuccessAuth_Login) {
-      // notify_success();
-      // setInput({ ...input, email: "", password: "" });
-      setTimeout(() => {
-        setIsLoading_Signin(isLoadingAuth_Login);
-        setLoading_Animation(isLoadingAuth_Login);
-        // navigate("/home");
-      }, 2000);
+      if (response_Login.status == 200) {
+        setElement_State({
+          ...elementState,
+          disable: true,
+          animation: true,
+        });
+        setTimeout(() => {
+          setElement_State({
+            ...elementState,
+            disable: false,
+            animation: false,
+          });
+          navigate("/home");
+        }, 2000);
+      }
     }
 
     switch (responseMessage_Login) {
@@ -124,12 +127,7 @@ const Signin = () => {
     responseMessage_Login,
     isSuccessAuth_Google,
     response_Google,
-    loading_animation,
   ]);
-
-  console.log(response_Login.data.login_method);
-  console.log(isLoading_Signin);
-  console.log(isLoadingAuth_Login);
 
   return (
     <>
@@ -148,11 +146,7 @@ const Signin = () => {
               id="email"
               onChange={(e) => setInput({ ...input, email: e.target.value })}
               value={input.email}
-              disabled={
-                isLoading_Signin || isLoadingAuth_Login || toggle_disable
-                  ? true
-                  : false
-              }
+              disabled={elementState.disable ? true : false}
               required
             />
             <input
@@ -162,20 +156,14 @@ const Signin = () => {
               id="passowrd"
               onChange={(e) => setInput({ ...input, password: e.target.value })}
               value={input.password}
-              disabled={
-                isLoading_Signin || isLoadingAuth_Login || toggle_disable
-                  ? true
-                  : false
-              }
+              disabled={elementState.disable ? true : false}
               required
             />
             <button
-              disabled={isLoading_Signin || isLoadingAuth_Login ? true : false}
+              disabled={elementState.disable ? true : false}
               className="bg-slate-700 text-white font-bold p-3 rounded-lg uppercase hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed h-[50px] transition-all duration-500 ease-in-out "
             >
-              {isLoading_Signin &&
-              !isLoadingAuth_Login &&
-              response_Login.data.login_method === "System" ? (
+              {elementState.animation === true ? (
                 <>
                   <div className="flex justify-center items-center text-[20px]">
                     <AiOutlineLoading3Quarters className="animate-spin" />
@@ -191,11 +179,11 @@ const Signin = () => {
           </form>
 
           <div className="flex gap-2 mt-5">
-            {toggle_disable === true ? (
+            {elementState.disable === true ? (
               <>
                 <p>Don't have an account?</p>
                 <button
-                  disabled={toggle_disable ? true : false}
+                  disabled={elementState.disable ? true : false}
                   className="text-blue-700 font-semibold hover:text-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Sign up

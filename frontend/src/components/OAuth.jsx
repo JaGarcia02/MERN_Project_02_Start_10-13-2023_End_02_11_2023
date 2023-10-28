@@ -7,8 +7,10 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 
 const OAuth = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [loading_animation, setLoading_Animation] = useState(false);
+  const [elementState, setElement_State] = useState({
+    disable: false,
+    animation: false,
+  });
   const {
     Auth_User,
     response_Google,
@@ -38,8 +40,6 @@ const OAuth = () => {
         photo: google_data_result.user.photoURL,
       };
 
-      setIsLoading(true);
-
       dispatch(login_user_google(googleUserData));
     } catch (error) {
       console.log("Could not signin with google!", error);
@@ -48,30 +48,30 @@ const OAuth = () => {
 
   useEffect(() => {
     if (isLoadingAuth_Google) {
-      setIsLoading(true);
+      setElement_State({ ...elementState, disable: true, animation: true });
     }
 
     if (isErrorAuth_Google) {
-      setIsLoading(false);
+      setElement_State({ ...elementState, disable: false });
     }
 
     if (isSuccessAuth_Login) {
-      setLoading_Animation(true);
+      setElement_State({ ...elementState, disable: true });
       setTimeout(() => {
-        setLoading_Animation(false);
+        setElement_State({ ...elementState, disable: false });
       }, 2000);
     }
 
     if (isSuccessAuth_Signup) {
-      setLoading_Animation(true);
+      setElement_State({ ...elementState, disable: true });
       setTimeout(() => {
-        setLoading_Animation(false);
+        setElement_State({ ...elementState, disable: false });
       }, 2000);
     }
 
     if (isSuccessAuth_Google) {
       setTimeout(() => {
-        setIsLoading(isLoadingAuth_Google);
+        setElement_State({ ...elementState, animation: true });
         navigate("/home");
         window.location.reload();
       }, 2000);
@@ -91,12 +91,12 @@ const OAuth = () => {
 
   return (
     <button
-      disabled={isLoading || loading_animation ? true : false}
+      disabled={elementState.disable ? true : false}
       onClick={Continue_With_Google}
       type="button"
       className="bg-red-700 text-white font-bold p-3 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed uppercase hover:opacity-75 h-[50px] transition-all duration-500 ease-in-out"
     >
-      {isLoading == true ? (
+      {elementState.animation === true ? (
         <>
           <div className="flex justify-center items-center text-[20px]">
             <AiOutlineLoading3Quarters className="animate-spin" />

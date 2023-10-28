@@ -10,9 +10,10 @@ import { reset, signup_user } from "../redux/features/auth/auth_slice";
 
 const Signup = () => {
   const [input, setInput] = useState({ username: "", email: "", password: "" });
-  const [isLoading_Signup, setIsLoading_Signup] = useState(false);
-  const [toggle_disable, setToggle_Disable] = useState(false);
-  const [loading_animation, setLoading_Animation] = useState(false);
+  const [elementState, setElement_State] = useState({
+    disable: false,
+    animation: false,
+  });
   const {
     Auth_User,
     response_Signup,
@@ -100,41 +101,47 @@ const Signup = () => {
 
   useEffect(() => {
     if (isLoadingAuth_Signup) {
-      setIsLoading_Signup(true);
-      setLoading_Animation(true);
+      setElement_State({ ...elementState, animation: true, disable: true });
     }
 
     if (isErrorAuth_Signup) {
-      setIsLoading_Signup(false);
-      setLoading_Animation(false);
+      setElement_State({ ...elementState, animation: false, disable: false });
     }
 
     if (isSuccessAuth_Google) {
       if (response_Google?.status == 201) {
-        setToggle_Disable(true);
+        setElement_State({ ...elementState, disable: true });
         notify_success_google();
-        setLoading_Animation(true);
         setTimeout(() => {
-          setLoading_Animation(false);
+          setElement_State({ ...elementState, disable: true });
         }, 2000);
       }
 
       if (response_Google?.status == 200) {
-        setToggle_Disable(true);
-        setLoading_Animation(true);
+        setElement_State({ ...elementState, disable: true });
         setTimeout(() => {
-          setLoading_Animation(false);
+          setElement_State({ ...elementState, disable: true });
         }, 2000);
       }
     }
 
     if (isSuccessAuth_Signup) {
-      notify_success();
-      setToggle_Disable(true);
-      setTimeout(() => {
-        setIsLoading_Signup(isLoadingAuth_Signup);
-        navigate("/");
-      }, 2000);
+      if (response_Signup.status == 201) {
+        notify_success();
+        setElement_State({
+          ...elementState,
+          disable: true,
+          animation: true,
+        });
+        setTimeout(() => {
+          setElement_State({
+            ...elementState,
+            disable: false,
+            animation: false,
+          });
+          navigate("/");
+        }, 2000);
+      }
     }
 
     switch (responseMessage_Signup) {
@@ -177,11 +184,7 @@ const Signup = () => {
               id="username"
               onChange={(e) => setInput({ ...input, username: e.target.value })}
               value={input.username}
-              disabled={
-                isLoading_Signup || loading_animation || toggle_disable
-                  ? true
-                  : false
-              }
+              disabled={elementState.disable ? true : false}
               required
             />
             <input
@@ -191,11 +194,7 @@ const Signup = () => {
               id="email"
               onChange={(e) => setInput({ ...input, email: e.target.value })}
               value={input.email}
-              disabled={
-                isLoading_Signup || loading_animation || toggle_disable
-                  ? true
-                  : false
-              }
+              disabled={elementState.disable ? true : false}
               required
             />
             <input
@@ -205,18 +204,14 @@ const Signup = () => {
               id="passowrd"
               onChange={(e) => setInput({ ...input, password: e.target.value })}
               value={input.password}
-              disabled={
-                isLoading_Signup || loading_animation || toggle_disable
-                  ? true
-                  : false
-              }
+              disabled={elementState.disable ? true : false}
               required
             />
             <button
-              disabled={isLoading_Signup || loading_animation ? true : false}
+              disabled={elementState.disable ? true : false}
               className="bg-slate-700 text-white font-bold p-3 rounded-lg uppercase hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed h-[50px] transition-all duration-500 ease-in-out "
             >
-              {isLoading_Signup && !response_Signup?.data?.login_method ? (
+              {elementState.animation === true ? (
                 <>
                   <div className="flex justify-center items-center text-[20px]">
                     <AiOutlineLoading3Quarters className="animate-spin" />
@@ -231,11 +226,11 @@ const Signup = () => {
             <OAuth />
           </form>
           <div className="flex gap-2 mt-5">
-            {toggle_disable === true ? (
+            {elementState.disable === true ? (
               <>
                 <p>Have an account?</p>
                 <button
-                  disabled={toggle_disable ? true : false}
+                  disabled={elementState.disable ? true : false}
                   className="text-blue-700 font-semibold hover:text-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Sign in

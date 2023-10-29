@@ -58,6 +58,7 @@ const Profile = () => {
     data: [],
     error: false,
     message: "",
+    disabled: false,
   });
   const {
     User,
@@ -347,9 +348,6 @@ const Profile = () => {
     }, 2000);
   };
 
-  console.log(listing.data.length);
-  console.log(listing.message);
-
   return (
     <>
       <Header />
@@ -402,7 +400,7 @@ const Profile = () => {
           </div>
           {trigger_button ? (
             // Make this responsive //
-            <div className=" w-full">
+            <div className="w-full">
               <div className="flex justify-between items-center p-3">
                 <button
                   disabled={triggerPercentage ? true : false}
@@ -426,20 +424,23 @@ const Profile = () => {
               <div className="p-3">
                 <button
                   type="button"
+                  disabled={listing.disabled ? true : false}
                   onClick={() => {
                     listing.data.length == 0
                       ? setListing({
                           ...listing,
                           message: "You have 0 listing!",
                           open: false,
+                          disabled: true,
                         })
                       : setListing({ ...listing, message: "", open: true });
                     setTimeout(() => {
                       setListing({
                         ...listing,
                         message: "",
+                        disabled: true,
                       });
-                    }, 3000);
+                    }, 5000);
                   }}
                   className="font-bold text-sm bg-blue-700 text-white h-[40px] w-full rounded-md hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-500 ease-in-out"
                 >

@@ -8,6 +8,7 @@ import jwt_decode from "jwt-decode";
 import axios from "axios";
 import { reset_user } from "../redux/features/user/user_slice";
 import { API_USER_URL, REQ_METHOD_GET_USER } from "../utils/user_url";
+import NoImage from "../assets/RealEstate_Images/no_image.jpg";
 
 const Header = () => {
   const {
@@ -154,7 +155,7 @@ const Header = () => {
             {/* <li className="hover:underline">Login</li> */}
             <img
               className="rounded-full h-8 w-8 object-cover"
-              src={user_data.photo}
+              src={user_data.photo || NoImage}
               alt=""
             />
           </Link>

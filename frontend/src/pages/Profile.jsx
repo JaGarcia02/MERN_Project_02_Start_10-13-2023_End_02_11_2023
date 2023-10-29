@@ -25,6 +25,7 @@ import {
 } from "../redux/features/user/user_slice";
 import { logout_user, reset } from "../redux/features/auth/auth_slice";
 import ShowListingModal from "../components/Listing/ShowListingModal";
+import NoImage from "../assets/RealEstate_Images/no_image.jpg";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -367,8 +368,8 @@ const Profile = () => {
           />
           <img
             className="rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2"
-            src={user_data.photo}
-            alt="profile"
+            src={user_data.photo || NoImage}
+            alt=""
             onClick={() => {
               toggle_disable === true
                 ? setTrigger_Button(false)

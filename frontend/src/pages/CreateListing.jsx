@@ -309,6 +309,7 @@ const CreateListing = () => {
                 <span>Offer</span>
               </div>
             </div>
+
             {/* Bed rooms and Bath rooms */}
             <div className="flex flex-wrap gap-6">
               <div className="flex items-center gap-2">

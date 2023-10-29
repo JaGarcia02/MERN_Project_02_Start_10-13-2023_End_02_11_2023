@@ -24,6 +24,7 @@ import {
   update_profile_picture,
 } from "../redux/features/user/user_slice";
 import { logout_user, reset } from "../redux/features/auth/auth_slice";
+import ShowListingModal from "../components/Listing/ShowListingModal";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -53,10 +54,10 @@ const Profile = () => {
     photo: "",
   });
   const [listing, setListing] = useState({
-    error: false,
-    listing_data: [],
     open: false,
-    disable: false,
+    data: [],
+    error: false,
+    message: "",
   });
   const {
     User,
@@ -103,27 +104,7 @@ const Profile = () => {
     });
   };
 
-  const notify_success_update_picture = () => {
-    toast.success("Profile Picture Successfully Updated!", {
-      position: "bottom-left",
-      hideProgressBar: false,
-      autoClose: 1000,
-      pauseOnHover: false,
-      theme: "colored",
-    });
-  };
-
   const notify_success_remove_picture = () => {
-    toast.success("Profile Picture Successfully Removed!", {
-      position: "bottom-left",
-      hideProgressBar: false,
-      autoClose: 1000,
-      pauseOnHover: false,
-      theme: "colored",
-    });
-  };
-
-  const notify_success_picture = () => {
     toast.success("Profile Picture Successfully Removed!", {
       position: "bottom-left",
       hideProgressBar: false,
@@ -251,6 +232,17 @@ const Profile = () => {
     }
   }, [uploadPercentage]);
 
+  useEffect(() => {
+    axios
+      .get(API_LISTING_URL + REQ_METHOD_GET_LISTING + decoded_token._id)
+      .then((res) => {
+        setListing({ ...listing, data: res.data });
+      })
+      .catch((error) => {
+        setListing({ ...listing, error: true, message: error });
+      });
+  }, []);
+
   // ******************************************************************************************** useEffects ******************************************************************************************** //
   // ******************************************************************************************** useEffects ******************************************************************************************** //
   // ******************************************************************************************** useEffects ******************************************************************************************** //
@@ -355,28 +347,17 @@ const Profile = () => {
     }, 2000);
   };
 
-  const ShowListing = () => {
-    setListing({ ...listing, open: true });
-
-    axios
-      .get(API_LISTING_URL + REQ_METHOD_GET_LISTING + decoded_token._id)
-      .then((res) => {
-        setListing({ ...listing, listing_data: res.data });
-      })
-      .catch((error) => {
-        console.log(error);
-        setListing({ ...listing, error: true });
-      });
-
-    console.log(listing.listing_data);
-  };
-
-  console.log(listing.open);
+  console.log(listing.data.length);
+  console.log(listing.message);
 
   return (
     <>
       <Header />
       <div className="p-3 max-w-lg mx-auto">
+        {listing.open === true && listing.data.length > 0 && (
+          <ShowListingModal listing={listing} setListing={setListing} />
+        )}
+
         <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
         <form onSubmit={UpdateProfile} className="flex flex-col gap-4">
           <input
@@ -421,24 +402,55 @@ const Profile = () => {
           </div>
           {trigger_button ? (
             // Make this responsive //
-            <div className="flex justify-between items-center w-full">
-              <button
-                disabled={triggerPercentage ? true : false}
-                onClick={(e) => {
-                  e.preventDefault();
-                  fileRef.current.click();
-                }}
-                className="font-bold text-sm bg-orange-500 text-white h-[30px] w-[200px] rounded-md hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-500 ease-in-out"
-              >
-                Change Profile Picture
-              </button>
-              <button
-                disabled={triggerPercentage ? true : false}
-                onClick={RemoveProfilePicture}
-                className="font-bold text-sm bg-red-700 text-white h-[30px] w-[200px] rounded-md hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-500 ease-in-out"
-              >
-                Remove Profile Picture
-              </button>
+            <div className=" w-full">
+              <div className="flex justify-between items-center p-3">
+                <button
+                  disabled={triggerPercentage ? true : false}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    fileRef.current.click();
+                  }}
+                  className="font-bold text-sm bg-orange-500 text-white h-[30px] w-[200px] rounded-md hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-500 ease-in-out"
+                >
+                  Change Profile Picture
+                </button>
+                <button
+                  disabled={triggerPercentage ? true : false}
+                  onClick={RemoveProfilePicture}
+                  className="font-bold text-sm bg-red-700 text-white h-[30px] w-[200px] rounded-md hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-500 ease-in-out"
+                >
+                  Remove Profile Picture
+                </button>
+              </div>
+
+              <div className="p-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    listing.data.length == 0
+                      ? setListing({
+                          ...listing,
+                          message: "You have 0 listing!",
+                          open: false,
+                        })
+                      : setListing({ ...listing, message: "", open: true });
+                    setTimeout(() => {
+                      setListing({
+                        ...listing,
+                        message: "",
+                      });
+                    }, 3000);
+                  }}
+                  className="font-bold text-sm bg-blue-700 text-white h-[40px] w-full rounded-md hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-500 ease-in-out"
+                >
+                  Show Listing
+                </button>
+                <div>
+                  <p className="text-red-700 font-semibold mt-2 text-center">
+                    {listing.message}
+                  </p>
+                </div>
+              </div>
             </div>
           ) : (
             ""
@@ -534,20 +546,13 @@ const Profile = () => {
         </div>
 
         <div className="mt-[1rem] w-full text-center flex flex-col justify-center items-center">
-          <button
-            onClick={ShowListing}
-            className="text-green-700 font-bold text-[20px] hover:opacity-75 hover:underline transition-all duration-200"
-          >
-            Show Listing
-          </button>
-
-          <p className="text-red-700 font-semibold text-[16px] mt-[1rem]">
+          {/* <p className="text-red-700 font-semibold text-[16px] mt-[1rem]">
             {listing.error ? "Error showing of listing, please try again!" : ""}
-          </p>
+          </p> */}
         </div>
 
         {/* All listings */}
-        <div className="flex flex-col gap-4">
+        {/* <div className="flex flex-col gap-4">
           <div className="text-center p-3 text-[1.5rem] font-semibold">
             <h1>Your Listing</h1>
           </div>
@@ -583,7 +588,7 @@ const Profile = () => {
               </div>
             );
           })}
-        </div>
+        </div> */}
         <ToastContainer />
       </div>
     </>

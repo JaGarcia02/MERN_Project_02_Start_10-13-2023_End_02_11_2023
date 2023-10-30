@@ -422,37 +422,42 @@ const Profile = () => {
                 </button>
               </div>
 
-              <div className="p-3">
-                <button
-                  type="button"
-                  disabled={listing.disabled ? true : false}
-                  onClick={() => {
-                    listing.data.length == 0
-                      ? setListing({
-                          ...listing,
-                          message: "You have 0 listing!",
-                          open: false,
-                          disabled: true,
-                        })
-                      : setListing({ ...listing, message: "", open: true });
-                    setTimeout(() => {
-                      setListing({
-                        ...listing,
-                        message: "",
-                        disabled: true,
-                      });
-                    }, 5000);
-                  }}
-                  className="font-bold text-sm bg-blue-700 text-white h-[40px] w-full rounded-md hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-500 ease-in-out"
-                >
-                  Show Listing
-                </button>
-                <div>
-                  <p className="text-red-700 font-semibold mt-2 text-center">
-                    {listing.message}
-                  </p>
+              {listing.data.length === 0 ? (
+                ""
+              ) : (
+                <div className="p-3">
+                  <button
+                    type="button"
+                    // disabled={listing.disabled ? true : false}
+                    onClick={() => {
+                      setListing({ ...listing, message: "", open: true });
+                      // listing.data.length == 0
+                      //   ? setListing({
+                      //       ...listing,
+                      //       message: "You have 0 listing!",
+                      //       open: false,
+                      //       disabled: true,
+                      //     })
+                      //   : setListing({ ...listing, message: "", open: true });
+                      // setTimeout(() => {
+                      //   setListing({
+                      //     ...listing,
+                      //     message: "",
+                      //     disabled: true,
+                      //   });
+                      // }, 5000);
+                    }}
+                    className="font-bold text-sm bg-blue-700 text-white h-[40px] w-full rounded-md hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-500 ease-in-out"
+                  >
+                    Show Listing
+                  </button>
+                  <div>
+                    <p className="text-red-700 font-semibold mt-2 text-center">
+                      {listing.message}
+                    </p>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           ) : (
             ""

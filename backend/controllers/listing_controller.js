@@ -133,3 +133,20 @@ export const DeleteListing = async (req, res) => {
   } catch (error) {}
   return res.status(500).json({ system_message: error.message });
 };
+
+export const GetLstingDetails = async (req, res) => {
+  const { id, userRef } = req.params;
+  try {
+    const verify_user = await User.findById({ _id: userRef });
+    const check_listing = await Listing.findById({ _id: id });
+    if (check_listing && verify_user) {
+      const listing_data = await Listing.findOne({ _id: id });
+
+      return res.status(200).json(listing_data);
+    } else {
+      return res.status(404).json({ system_message: "Listing not found!" });
+    }
+  } catch (error) {
+    return res.status(500).json({ system_message: error.message });
+  }
+};

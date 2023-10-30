@@ -34,10 +34,14 @@ const ShowListingModal = ({ listing, setListing }) => {
       <div className="w-screen h-screen absolute top-0 left-0 z-[999] bg-black/50 overflow-hidden flex justify-center items-center">
         <div className="h-[750px] w-[750px] bg-gray-100 rounded-md">
           {/* Top Header Modal */}
-          <div className="flex justify-end bg-slate-300 h-[40px]">
+          <div className="flex justify-between items-center bg-slate-300 h-[40px] p-3">
+            <h1 className="font-bold text-sm sm:text-xl flex flex-wrap">
+              <span className="text-slate-500">JaCorp</span>
+              <span className="text-slate-700">Estate</span>
+            </h1>
             <button
               onClick={() => setListing({ ...listing, open: false })}
-              className="text-red-700 hover:opacity-75 transition-all duration-200 p-1"
+              className="text-red-700 hover:opacity-75 transition-all duration-200 "
             >
               <FaTimesCircle className="h-[25px] w-[25px] mr-1 mt-1" />
             </button>
@@ -78,9 +82,12 @@ const ShowListingModal = ({ listing, setListing }) => {
                       >
                         Delete
                       </button>
-                      <button className="bg-orange-500 h-[25px] text-white font-bold rounded-md uppercase hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed  transition-all duration-500 ease-in-out ">
+                      <Link
+                        to={`/update-listing/${data._id}/${decoded_token._id}`}
+                        className="bg-orange-500 h-[25px] text-white text-center font-bold rounded-md uppercase hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed  transition-all duration-500 ease-in-out "
+                      >
                         Update
-                      </button>
+                      </Link>
                     </div>
                   </div>
                 );

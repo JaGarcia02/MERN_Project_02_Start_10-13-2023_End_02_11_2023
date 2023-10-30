@@ -10,6 +10,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import CreateListing from "./pages/CreateListing";
 import SingleImageUploadMulter from "./pages/Test/SingleImageUploadMulter";
 import MultipleImageUploadMulter from "./pages/Test/MultipleImageUploadMulter";
+import UpdateListing from "./pages/UpdateListing";
 
 function App() {
   return (
@@ -30,6 +31,10 @@ function App() {
           <Route path="/" element={<PrivateRoute />}>
             <Route path="/profile" element={<Profile />} />
             <Route path="/create-listing" element={<CreateListing />} />
+            <Route
+              path="/update-listing/:listingId/:userId"
+              element={<UpdateListing />}
+            />
           </Route>
         </Routes>
       </div>

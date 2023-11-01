@@ -86,7 +86,7 @@ const Listing = () => {
                   key={data._id}
                   className="border-[1px] border-gray-400 rounded-lgnde p-3 flex justify-between items-center gap-4"
                 >
-                  <Link to={`/listing/${data._id}`}>
+                  <Link to={`/listing-details/${data._id}`}>
                     <img
                       src={data.imageURLs[0]}
                       alt="listing cover"
@@ -94,7 +94,7 @@ const Listing = () => {
                     />
                   </Link>
                   <Link
-                    to={`/listing/${data._id}`}
+                    to={`/listing-details/${data._id}`}
                     className="flex-1 text-slate-700 font-semibold  hover:underline truncate"
                   >
                     <p>{data.name}</p>

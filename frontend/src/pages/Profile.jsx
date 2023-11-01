@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import jwt_decode from "jwt-decode";
 import Header from "../components/Header";
+import jwt_decode from "jwt-decode";
 import Cookie from "js-cookie";
 import {
   getStorage,
@@ -94,20 +94,20 @@ const Profile = () => {
 
   // notfication tostify
   const notify_success = () => {
-    toast.success("Account Successfully Removed!", {
+    toast.info("Account Successfully Removed!", {
       position: "bottom-left",
       hideProgressBar: false,
-      autoClose: 1000,
+      autoClose: 3000,
       pauseOnHover: false,
       theme: "colored",
     });
   };
 
   const notify_success_update_profileDetails = () => {
-    toast.success("Account Details Updated!", {
+    toast.info("Account Details Updated!", {
       position: "bottom-left",
       hideProgressBar: false,
-      autoClose: 1000,
+      autoClose: 3000,
       pauseOnHover: false,
       theme: "colored",
     });
@@ -117,7 +117,7 @@ const Profile = () => {
     toast.success("Profile Picture Successfully Removed!", {
       position: "bottom-left",
       hideProgressBar: false,
-      autoClose: 1000,
+      autoClose: 3000,
       pauseOnHover: false,
       theme: "colored",
     });
@@ -340,7 +340,7 @@ const Profile = () => {
         setLoading_Animation(isLoadingUser_Delete);
         navigate("/");
         window.location.reload();
-      }, 2000);
+      }, 3000);
     } else {
       notify_error();
     }
@@ -412,7 +412,7 @@ const Profile = () => {
                     e.preventDefault();
                     fileRef.current.click();
                   }}
-                  className={`font-bold text-sm bg-orange-500 uppercase text-white h-[40px] w-[200px] rounded-md hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-500 ease-in-out hover:rounded-full}`}
+                  className={`font-bold text-sm bg-yellow-500 uppercase text-white h-[35px] w-[180px] rounded-md hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-500 ease-in-out hover:rounded-full}`}
                 >
                   <div className="flex justify-center items-center">
                     <FcAddImage className="mr-2 text-[20px] " />
@@ -422,7 +422,7 @@ const Profile = () => {
                 <button
                   disabled={triggerPercentage ? true : false}
                   onClick={RemoveProfilePicture}
-                  className="font-bold text-sm bg-red-700 uppercase text-white h-[40px] w-[200px] rounded-md hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-500 ease-in-out"
+                  className="font-bold text-sm bg-red-500 uppercase text-white h-[35px] w-[180px] rounded-md hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-500 ease-in-out"
                 >
                   <div className="flex justify-center items-center">
                     <FcRemoveImage className="mr-2 text-[20px]" />

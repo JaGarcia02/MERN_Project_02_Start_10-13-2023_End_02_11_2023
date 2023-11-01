@@ -5,10 +5,14 @@ import {
   UpdateListing,
   DeleteListing,
   GetLstingDetails,
+  GetAllListing,
+  SearchListing,
 } from "../controllers/listing_controller.js";
 
 const router = express.Router();
 
+router.get("/get-search-listing", SearchListing);
+router.get("/get-listing", GetAllListing);
 router.get("/get-user-listing/:id", GetUserListing);
 router.get("/get-user-listing-detail/:id/:userRef", GetLstingDetails);
 router.post("/create-listing", CreateListing);

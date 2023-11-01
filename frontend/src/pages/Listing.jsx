@@ -10,6 +10,8 @@ import {
 } from "../utils/listing_url";
 import { useNavigate, Link } from "react-router-dom";
 import { FcAddDatabase, FcEmptyTrash, FcFile } from "react-icons/fc";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Listing = () => {
   const navigate = useNavigate();
@@ -34,19 +36,31 @@ const Listing = () => {
   }, []);
 
   const DeleteLising = (id) => {
-    axios
-      .delete(
-        API_LISTING_URL +
-          REQ_METHOD_DELETE_LISTING +
-          `${id}/` +
-          decoded_token._id
-      )
-      .then((res) => {
-        setListing({ ...listing, data: res.data.payload });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    notify_success();
+    // axios
+    //   .delete(
+    //     API_LISTING_URL +
+    //       REQ_METHOD_DELETE_LISTING +
+    //       `${id}/` +
+    //       decoded_token._id
+    //   )
+    //   .then((res) => {
+    //     notify_success();
+    //     setListing({ ...listing, data: res.data.payload });
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
+  };
+
+  const notify_success = () => {
+    toast.info("Listing Removed!", {
+      position: "bottom-left",
+      hideProgressBar: false,
+      autoClose: 3000,
+      pauseOnHover: false,
+      theme: "colored",
+    });
   };
 
   return (
@@ -124,6 +138,7 @@ const Listing = () => {
           </>
         </div>
       </div>
+      <ToastContainer />
     </>
   );
 };

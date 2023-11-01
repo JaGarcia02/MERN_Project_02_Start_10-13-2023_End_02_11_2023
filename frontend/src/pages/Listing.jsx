@@ -37,20 +37,20 @@ const Listing = () => {
 
   const DeleteLising = (id) => {
     notify_success();
-    // axios
-    //   .delete(
-    //     API_LISTING_URL +
-    //       REQ_METHOD_DELETE_LISTING +
-    //       `${id}/` +
-    //       decoded_token._id
-    //   )
-    //   .then((res) => {
-    //     notify_success();
-    //     setListing({ ...listing, data: res.data.payload });
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
+    axios
+      .delete(
+        API_LISTING_URL +
+          REQ_METHOD_DELETE_LISTING +
+          `${id}/` +
+          decoded_token._id
+      )
+      .then((res) => {
+        notify_success();
+        setListing({ ...listing, data: res.data.payload });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   const notify_success = () => {
@@ -80,7 +80,7 @@ const Listing = () => {
           <div className="flex justify-center items-center">
             <Link
               to={"/create-listing"}
-              className={`border-[2px] border-green-700 w-[50px] h-[50px] text-[2rem] flex justify-center items-center rounded-full text-white p-3 text-center hover:opacity-75 font-bold uppercase transition-all duration-100 ease-in-out hover:bg-green-100 `}
+              className={`border-[2px] border-green-700 w-[50px] h-[50px] text-[2rem] flex justify-center items-center rounded-full text-white p-3 text-center hover:opacity-75 font-bold uppercase transition-all duration-100 ease-in-out hover:bg-green-500 `}
             >
               <FcAddDatabase />
             </Link>
@@ -117,7 +117,7 @@ const Listing = () => {
                   <div className="flex flex-col justify-center items-center w-[50px]">
                     <button
                       onClick={() => DeleteLising(data._id)}
-                      className="border-[2px] border-red-500 h-[35px] w-[35px] rounded-full mb-2 text-white font-bold uppercase hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed  transition-all duration-100 ease-in-out hover:bg-red-100"
+                      className="border-[2px] border-red-500 h-[35px] w-[35px] rounded-full mb-2 text-white font-bold uppercase hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed  transition-all duration-100 ease-in-out hover:bg-red-500"
                     >
                       <span className="w-full flex justify-center items-center">
                         <FcEmptyTrash />
@@ -125,7 +125,7 @@ const Listing = () => {
                     </button>
                     <Link
                       to={`/update-listing/${data._id}/${decoded_token._id}`}
-                      className="border-[2px] border-orange-500 flex justify-center items-center h-[35px] w-[35px] text-white text-center font-bold rounded-full uppercase hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-100 ease-in-out hover:bg-yellow-100"
+                      className="border-[2px] border-yellow-500 flex justify-center items-center h-[35px] w-[35px] text-white text-center font-bold rounded-full uppercase hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-100 ease-in-out hover:bg-yellow-300"
                     >
                       <span className="">
                         <FcFile />

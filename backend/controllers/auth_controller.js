@@ -212,7 +212,7 @@ const generate_token_google = (_id, username, email, password, photo) => {
       photo,
     },
     process.env.JWT_SECRET,
-    { expiresIn: "1h" }
+    { expiresIn: "10h" }
   );
 };
 
@@ -226,6 +226,6 @@ const generate_token = (_id, username, email, password, photo) => {
       photo,
     },
     process.env.JWT_SECRET,
-    { expiresIn: "1h" }
+    { expiresIn: "10h" }
   );
 };

@@ -11,6 +11,9 @@ import {
 import { app } from "../firebase/google_firebase";
 import { AiOutlineLoading3Quarters, AiFillPicture } from "react-icons/ai";
 import { ImFolderUpload } from "react-icons/im";
+import { BiSolidSave } from "react-icons/bi";
+import { FaBuildingUser } from "react-icons/fa6";
+
 import {
   FcRemoveImage,
   FcAddImage,
@@ -475,18 +478,42 @@ const Profile = () => {
           <button
             type="submit"
             disabled={logout_disable || disable_update ? true : false}
-            className="bg-slate-700 text-white font-bold rounded-lg p-3 uppercase hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed h-[45px] transition-all duration-500 ease-in-out "
+            className="bg-slate-700 text-center flex justify-center items-center text-white font-bold rounded-lg p-3 uppercase hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed h-[45px] transition-all duration-500 ease-in-out "
           >
-            {loading_animation === true ? (
+            {loading_animation ? (
               <>
                 <div className="flex justify-center items-center text-[20px]">
                   <AiOutlineLoading3Quarters className="animate-spin" />
                 </div>
               </>
             ) : (
-              <span>update</span>
+              <>
+                <BiSolidSave className="text-[24px]" />
+                <span className="ml-2">Update</span>
+              </>
             )}
           </button>
+          {logout_disable === true ? (
+            <>
+              <button
+                disabled={logout_disable || disable_update ? true : false}
+                className="bg-blue-800 text-center flex justify-center items-center text-white font-bold rounded-lg p-3 uppercase hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed h-[45px] transition-all duration-500 ease-in-out "
+              >
+                <FaBuildingUser className="text-[24px]" />
+                <span className="ml-2">Listing</span>
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                className="bg-blue-800 text-white flex justify-center items-center font-bold text-center rounded-lg p-3 uppercase hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed h-[45px] transition-all duration-500 ease-in-out "
+                to={"/listing"}
+              >
+                <FaBuildingUser className="text-[24px]" />
+                <span className="ml-2">Listing</span>
+              </Link>
+            </>
+          )}
         </form>
         <div className="flex justify-between mt-5 font-bold">
           <button

@@ -26,6 +26,7 @@ import {
 import Header from "../components/Header";
 import { useNavigate, useParams } from "react-router-dom";
 import { BsBuildingFillAdd, BsBuildingFillUp } from "react-icons/bs";
+import { MdDriveFolderUpload } from "react-icons/md";
 
 const UpdateListing = () => {
   const decoded_token = jwt_decode(Cookie.get("user_token"));
@@ -488,20 +489,20 @@ const UpdateListing = () => {
                 }
                 type="button"
                 onClick={UploadImages}
-                className={`p-3 text-green-700 border-[2px] border-green-700 font-semibold rounded uppercase hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed ${
+                className={`p-3 text-green-700 border-[2px] w-[60px] border-green-700 font-semibold rounded uppercase hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed ${
                   loading_animation ? "bg-green-700 opacity-50 w-[7rem]" : ""
                 }`}
               >
                 {loading_animation ? (
                   <>
-                    <div className="flex justify-center items-center  text-white">
+                    <div className="flex justify-center items-center text-[20px] text-white">
                       <AiOutlineLoading3Quarters className="animate-spin" />
                     </div>
                   </>
                 ) : (
                   <>
                     <span>
-                      <FcUpload className="text-[35px]" />
+                      <MdDriveFolderUpload className="text-[30px]" />
                     </span>
                   </>
                 )}

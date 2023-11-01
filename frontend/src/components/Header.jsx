@@ -30,6 +30,7 @@ const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [user_data, setUser_Data] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const token = {
     token: Cookie.get("user_token"),
@@ -123,6 +124,24 @@ const Header = () => {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchTermFromUrl = urlParams.get("searchTerm");
+
+    if (searchTerm) {
+      setSearchTerm(searchTermFromUrl);
+    }
+  }, [location.search]);
+
+  const SubmitSearch = (e) => {
+    e.preventDefault();
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set("searchTerm", searchTerm);
+    const searchQuery = urlParams.toString();
+
+    navigate(`/search?${searchQuery}`);
+  };
+
   return (
     <header className="bg-slate-200 shadow-md ">
       <div className="flex justify-between items-center max-w-6xl mx-auto p-3">
@@ -132,13 +151,20 @@ const Header = () => {
             <span className="text-slate-700">Estate</span>
           </h1>
         </Link>
-        <form className="bg-slate-100 p-3 rounded-lg flex items-center  ">
+        <form
+          onSubmit={SubmitSearch}
+          className="bg-slate-100 p-3 rounded-lg flex items-center  "
+        >
           <input
             type="text"
             placeholder="Search..."
             className="bg-transparent focus:outline-none w-24 sm:w-64" // <--- this can be responsive to modify the size of the textbox
+            onChange={(e) => setSearchTerm(e.target.value)}
+            value={searchTerm}
           />
-          <FaSearch className="text-slate-600" />
+          <button>
+            <FaSearch className="text-slate-600" />
+          </button>
         </form>
         <ul className="flex items-center gap-4 text-slate-700 cursor-pointer font-semibold">
           <Link to={"/listing"}>

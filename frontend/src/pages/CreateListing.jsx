@@ -17,6 +17,13 @@ import {
   API_LISTING_URL,
   REQ_METHOD_CREATE_LISTING,
 } from "../utils/listing_url";
+import {
+  FcRemoveImage,
+  FcAddImage,
+  FcEditImage,
+  FcUpload,
+} from "react-icons/fc";
+import { BsBuildingFillAdd } from "react-icons/bs";
 
 const CreateListing = () => {
   const decoded_token = jwt_decode(Cookie.get("user_token"));
@@ -442,7 +449,9 @@ const CreateListing = () => {
                   </>
                 ) : (
                   <>
-                    <span>Upload</span>
+                    <span>
+                      <FcUpload className="text-[35px]" />
+                    </span>
                   </>
                 )}
               </button>
@@ -487,7 +496,7 @@ const CreateListing = () => {
             <button
               disabled={disable_button.create_listing ? true : false}
               type="submit"
-              className="p-3 bg-slate-700 text-white rounded-lg uppercase transition-all duration-200 hover:opacity-75 disabled:opacity-50"
+              className="p-3 bg-slate-700 text-white rounded-lg uppercase transition-all duration-200 hover:opacity-90 disabled:opacity-50 hover:text-green-500"
             >
               {disable_button.create_listing ? (
                 <>
@@ -497,7 +506,10 @@ const CreateListing = () => {
                 </>
               ) : (
                 <>
-                  <span> Create Listing</span>
+                  <div className="flex items-center justify-center">
+                    <BsBuildingFillAdd className="text-[20px] mr-3" />
+                    <span className="font-bold">Create Listing</span>
+                  </div>
                 </>
               )}
             </button>

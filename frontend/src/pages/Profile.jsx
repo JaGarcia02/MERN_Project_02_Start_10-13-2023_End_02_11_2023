@@ -9,7 +9,14 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import { app } from "../firebase/google_firebase";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { AiOutlineLoading3Quarters, AiFillPicture } from "react-icons/ai";
+import { ImFolderUpload } from "react-icons/im";
+import {
+  FcRemoveImage,
+  FcAddImage,
+  FcEditImage,
+  FcUpload,
+} from "react-icons/fc";
 import axios from "axios";
 import { API_USER_URL, REQ_METHOD_GET_USER } from "../utils/user_url";
 import { API_LISTING_URL, REQ_METHOD_GET_LISTING } from "../utils/listing_url";
@@ -352,11 +359,7 @@ const Profile = () => {
   return (
     <>
       <Header />
-      <div className="p-3 max-w-lg mx-auto">
-        {listing.open === true && listing.data.length > 0 && (
-          <ShowListingModal listing={listing} setListing={setListing} />
-        )}
-
+      <div className="p-3 max-w-lg mx-auto over">
         <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
         <form onSubmit={UpdateProfile} className="flex flex-col gap-4">
           <input
@@ -409,55 +412,24 @@ const Profile = () => {
                     e.preventDefault();
                     fileRef.current.click();
                   }}
-                  className="font-bold text-sm bg-orange-500 text-white h-[30px] w-[200px] rounded-md hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-500 ease-in-out"
+                  className={`font-bold text-sm bg-orange-500 uppercase text-white h-[40px] w-[200px] rounded-md hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-500 ease-in-out hover:rounded-full}`}
                 >
-                  Change Profile Picture
+                  <div className="flex justify-center items-center">
+                    <FcAddImage className="mr-2 text-[20px] " />
+                    <p className="">Upload Picture</p>
+                  </div>
                 </button>
                 <button
                   disabled={triggerPercentage ? true : false}
                   onClick={RemoveProfilePicture}
-                  className="font-bold text-sm bg-red-700 text-white h-[30px] w-[200px] rounded-md hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-500 ease-in-out"
+                  className="font-bold text-sm bg-red-700 uppercase text-white h-[40px] w-[200px] rounded-md hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-500 ease-in-out"
                 >
-                  Remove Profile Picture
+                  <div className="flex justify-center items-center">
+                    <FcRemoveImage className="mr-2 text-[20px]" />
+                    <span>Remove Picture</span>
+                  </div>
                 </button>
               </div>
-
-              {listing.data.length === 0 ? (
-                ""
-              ) : (
-                <div className="p-3">
-                  <button
-                    type="button"
-                    // disabled={listing.disabled ? true : false}
-                    onClick={() => {
-                      setListing({ ...listing, message: "", open: true });
-                      // listing.data.length == 0
-                      //   ? setListing({
-                      //       ...listing,
-                      //       message: "You have 0 listing!",
-                      //       open: false,
-                      //       disabled: true,
-                      //     })
-                      //   : setListing({ ...listing, message: "", open: true });
-                      // setTimeout(() => {
-                      //   setListing({
-                      //     ...listing,
-                      //     message: "",
-                      //     disabled: true,
-                      //   });
-                      // }, 5000);
-                    }}
-                    className="font-bold text-sm bg-blue-700 text-white h-[40px] w-full rounded-md hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-500 ease-in-out"
-                  >
-                    Show Listing
-                  </button>
-                  <div>
-                    <p className="text-red-700 font-semibold mt-2 text-center">
-                      {listing.message}
-                    </p>
-                  </div>
-                </div>
-              )}
             </div>
           ) : (
             ""
@@ -515,25 +487,6 @@ const Profile = () => {
               <span>update</span>
             )}
           </button>
-          {toggle_disable === true ? (
-            <>
-              <button
-                disabled={toggle_disable ? true : false}
-                className="bg-green-700 text-white p-3 rounded-lg text-center disabled:opacity-50 uppercase font-bold"
-              >
-                Create Listing
-              </button>
-            </>
-          ) : (
-            <>
-              <Link
-                to={"/create-listing"}
-                className={`bg-green-700 text-white p-3 rounded-lg text-center hover:opacity-75 font-bold uppercase transition-all duration-500 ease-in-out `}
-              >
-                Create Listing
-              </Link>
-            </>
-          )}
         </form>
         <div className="flex justify-between mt-5 font-bold">
           <button
@@ -552,50 +505,8 @@ const Profile = () => {
           </button>
         </div>
 
-        <div className="mt-[1rem] w-full text-center flex flex-col justify-center items-center">
-          {/* <p className="text-red-700 font-semibold text-[16px] mt-[1rem]">
-            {listing.error ? "Error showing of listing, please try again!" : ""}
-          </p> */}
-        </div>
+        <div className="mt-[1rem] w-full text-center flex flex-col justify-center items-center"></div>
 
-        {/* All listings */}
-        {/* <div className="flex flex-col gap-4">
-          <div className="text-center p-3 text-[1.5rem] font-semibold">
-            <h1>Your Listing</h1>
-          </div>
-          {listing.listing_data.map((data) => {
-            console.log(data);
-            return (
-              <div
-                key={data._id}
-                className="border rounded-lgnde p-3 flex justify-between items-center gap-4"
-              >
-                <Link to={`/listing/${data._id}`}>
-                  <img
-                    src={data.imageURLs[0]}
-                    alt="listing cover"
-                    className="h-16 w-16 object-contain"
-                  />
-                </Link>
-                <Link
-                  to={`/listing/${data._id}`}
-                  className="flex-1 text-slate-700 font-semibold  hover:underline truncate"
-                >
-                  <p>{data.name}</p>
-                </Link>
-
-                <div className="flex flex-col w-[100px]">
-                  <button className="bg-red-700 h-[25px] mb-2 text-white font-bold rounded-md uppercase hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed  transition-all duration-500 ease-in-out ">
-                    Delete
-                  </button>
-                  <button className="bg-orange-500 h-[25px] text-white font-bold rounded-md uppercase hover:opacity-75 disabled:opacity-50 disabled:cursor-not-allowed  transition-all duration-500 ease-in-out ">
-                    Update
-                  </button>
-                </div>
-              </div>
-            );
-          })}
-        </div> */}
         <ToastContainer />
       </div>
     </>

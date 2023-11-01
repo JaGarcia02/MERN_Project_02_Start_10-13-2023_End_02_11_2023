@@ -11,6 +11,7 @@ import CreateListing from "./pages/CreateListing";
 import SingleImageUploadMulter from "./pages/Test/SingleImageUploadMulter";
 import MultipleImageUploadMulter from "./pages/Test/MultipleImageUploadMulter";
 import UpdateListing from "./pages/UpdateListing";
+import Listing from "./pages/Listing";
 
 function App() {
   return (
@@ -30,6 +31,9 @@ function App() {
           {/* Private Route */}
           <Route path="/" element={<PrivateRoute />}>
             <Route path="/profile" element={<Profile />} />
+
+            {/* Listings */}
+            <Route path="/listing" element={<Listing />} />
             <Route path="/create-listing" element={<CreateListing />} />
             <Route
               path="/update-listing/:listingId/:userId"

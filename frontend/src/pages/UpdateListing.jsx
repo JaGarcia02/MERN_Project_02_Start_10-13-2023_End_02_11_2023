@@ -17,11 +17,19 @@ import {
   REQ_METHOD_GET_LISING_DETAILS,
   REQ_METHOD_PATCH_LISTING_DETAILS,
 } from "../utils/listing_url";
+import {
+  FcRemoveImage,
+  FcAddImage,
+  FcEditImage,
+  FcUpload,
+} from "react-icons/fc";
 import Header from "../components/Header";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { BsBuildingFillAdd, BsBuildingFillUp } from "react-icons/bs";
 
 const UpdateListing = () => {
   const decoded_token = jwt_decode(Cookie.get("user_token"));
+  const navigate = useNavigate();
   const listing_params = useParams();
   const [files, setFiles] = useState([]);
   const [formData, setFormData] = useState({ imageUrls: [] });
@@ -32,6 +40,7 @@ const UpdateListing = () => {
   });
   const [uploadError, setUploadError] = useState(false);
   const [input_data, setInput_Data] = useState({
+    id: "",
     name: "",
     description: "",
     address: "",
@@ -61,6 +70,7 @@ const UpdateListing = () => {
       .then((res) => {
         setInput_Data({
           ...input_data,
+          id: res.data._id,
           name: res.data.name,
           description: res.data.description,
           address: res.data.address,
@@ -82,6 +92,8 @@ const UpdateListing = () => {
         console.log(error);
       });
   }, []);
+
+  console.log(input_data);
 
   const notify_success = () => {
     toast.success("Listing Updated!", {
@@ -214,7 +226,7 @@ const UpdateListing = () => {
           setTimeout(() => {
             setDisable_Button({ ...disable_button, update: false });
             setDisable_Button({ ...disable_button, create_listing: false });
-            window.location.reload();
+            navigate(`/listing/${input_data.id}`);
           }, 2000);
         })
         .catch((error) => {
@@ -482,13 +494,15 @@ const UpdateListing = () => {
               >
                 {loading_animation ? (
                   <>
-                    <div className="flex justify-center items-center text-[20px] text-white">
+                    <div className="flex justify-center items-center  text-white">
                       <AiOutlineLoading3Quarters className="animate-spin" />
                     </div>
                   </>
                 ) : (
                   <>
-                    <span>Upload</span>
+                    <span>
+                      <FcUpload className="text-[35px]" />
+                    </span>
                   </>
                 )}
               </button>
@@ -533,7 +547,7 @@ const UpdateListing = () => {
             <button
               disabled={disable_button.create_listing ? true : false}
               type="submit"
-              className="p-3 bg-slate-700 text-white rounded-lg uppercase transition-all duration-200 hover:opacity-75 disabled:opacity-50"
+              className="p-3 bg-slate-700 text-white rounded-lg uppercase transition-all duration-200 hover:opacity-90 disabled:opacity-50 hover:text-yellow-500"
             >
               {disable_button.create_listing ? (
                 <>
@@ -543,7 +557,10 @@ const UpdateListing = () => {
                 </>
               ) : (
                 <>
-                  <span> Update Listing</span>
+                  <div className="flex items-center justify-center">
+                    <BsBuildingFillUp className="text-[20px] mr-3" />
+                    <span className="font-bold">Create Listing</span>
+                  </div>
                 </>
               )}
             </button>

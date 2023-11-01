@@ -141,11 +141,11 @@ const Header = () => {
           <FaSearch className="text-slate-600" />
         </form>
         <ul className="flex items-center gap-4 text-slate-700 cursor-pointer font-semibold">
-          <Link to={"/home"}>
+          <Link to={"/listing"}>
             <li
               className="hidden sm:inline hover:underline" // this will hide the home list if the screen size is small
             >
-              Home
+              Listing
             </li>
           </Link>
           <Link to={"/about"}>

@@ -31,7 +31,7 @@ const ShowListingModal = ({ listing, setListing }) => {
 
   return (
     <>
-      <div className="w-screen h-screen absolute top-0 left-0 z-[999] bg-black/50 overflow-hidden flex justify-center items-center">
+      <div className="w-screen h-screen absolute top-0 left-0 z-[9999] bg-black/50 overflow-hidden flex justify-center items-center">
         <div className="h-[750px] w-[750px] bg-gray-100 rounded-md">
           {/* Top Header Modal */}
           <div className="flex justify-between items-center bg-slate-300 h-[40px] p-3">

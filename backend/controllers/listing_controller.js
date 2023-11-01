@@ -171,7 +171,6 @@ export const SearchListing = async (req, res) => {
     }
 
     let furnished = req.query.furnished;
-
     if (furnished === undefined || furnished === "false") {
       furnished = { $in: [false, true] };
     }

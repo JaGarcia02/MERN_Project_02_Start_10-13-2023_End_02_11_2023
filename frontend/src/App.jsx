@@ -13,6 +13,7 @@ import MultipleImageUploadMulter from "./pages/Test/MultipleImageUploadMulter";
 import UpdateListing from "./pages/UpdateListing";
 import Listing from "./pages/Listing";
 import ListingDetails from "./pages/ListingDetails";
+import Search from "./pages/Search";
 
 function App() {
   return (
@@ -22,8 +23,6 @@ function App() {
           {/* Public Route */}
           <Route path="/" element={<Signin />} />
           <Route path="/sign-up" element={<Signup />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/about" element={<About />} />
 
           {/* Test Route */}
           <Route path="/test" element={<SingleImageUploadMulter />} />
@@ -44,6 +43,10 @@ function App() {
               path="/update-listing/:listingId/:userId"
               element={<UpdateListing />}
             />
+
+            <Route path="/search" element={<Search />} />
+            <Route path="/home" element={<Home />} />
+            <Route path="/about" element={<About />} />
           </Route>
         </Routes>
       </div>

@@ -24,6 +24,7 @@ import {
   FcUpload,
 } from "react-icons/fc";
 import { BsBuildingFillAdd } from "react-icons/bs";
+import { MdDriveFolderUpload } from "react-icons/md";
 
 const CreateListing = () => {
   const decoded_token = jwt_decode(Cookie.get("user_token"));
@@ -242,14 +243,14 @@ const CreateListing = () => {
                 <input
                   type="checkbox"
                   name="sell"
-                  id="sell"
+                  id="sale"
                   className="w-5"
-                  checked={input_data.type === "sell"}
+                  checked={input_data.type === "sale"}
                   onClick={() => {
-                    setInput_Data({ ...input_data, type: "sell" });
+                    setInput_Data({ ...input_data, type: "sale" });
                   }}
                 />
-                <span>Sell</span>
+                <span>Sale</span>
               </div>
               <div className="flex gap-2">
                 <input
@@ -437,8 +438,8 @@ const CreateListing = () => {
                 }
                 type="button"
                 onClick={UploadImages}
-                className={`p-3 text-green-700 border-[2px] border-green-700 font-semibold rounded uppercase hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed ${
-                  loading_animation ? "bg-green-700 opacity-50 w-[7rem]" : ""
+                className={`p-3 text-green-700 border-[2px] w-[60px] border-green-700 font-semibold rounded uppercase hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed ${
+                  loading_animation ? "bg-green-700 opacity-50 w-[60px]" : ""
                 }`}
               >
                 {loading_animation ? (
@@ -449,9 +450,9 @@ const CreateListing = () => {
                   </>
                 ) : (
                   <>
-                    <span>
-                      <FcUpload className="text-[35px]" />
-                    </span>
+                    <div className="flex justify-center items-center text-[20px] text-green-700">
+                      <MdDriveFolderUpload className="text-[30px]" />
+                    </div>
                   </>
                 )}
               </button>

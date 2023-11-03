@@ -334,17 +334,22 @@ const Profile = () => {
 
   const DeleteAccount = () => {
     const id = decoded_token._id;
-    if (
-      confirm("Please confirm for deleting this account.\nJaCorpEstate") == true
-    ) {
-      notify_success();
-      setTimeout(() => {
-        dispatch(delete_user(id));
-        setLoading_Animation(isLoadingUser_Delete);
-        navigate("/");
-        window.location.reload();
-      }, 3000);
-    } else {
+    try {
+      if (
+        confirm("Please confirm for deleting this account.\nJaCorpEstate") ==
+        true
+      ) {
+        notify_success();
+        setTimeout(() => {
+          dispatch(delete_user(id));
+          setLoading_Animation(isLoadingUser_Delete);
+          navigate("/");
+          window.location.reload();
+        }, 3000);
+      } else {
+      }
+    } catch (error) {
+      console.log(error);
       notify_error();
     }
   };
